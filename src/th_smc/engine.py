@@ -170,6 +170,7 @@ def load_ohlcv(symbol: str, period: str = "1y", interval: str = "1d", market: st
                 auto_adjust=False,
                 progress=False,
                 threads=False,
+                timeout=10,
             )
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = [col[0] for col in df.columns]
@@ -537,13 +538,21 @@ def collect_candidate_sources(market: str = "TH", limit_per_source: int = 0) -> 
     metric_rows, universe_meta = load_market_snapshot(market)
     if universe_meta["provider"] != "tradingview":
         enriched_rows: list[dict[str, Any]] = []
-        for row in metric_rows:
+
+        def _enrich(row: dict[str, Any]) -> dict[str, Any] | None:
             normalized = row["symbol"]
             try:
                 df = load_ohlcv(normalized, market=market)
-                enriched_rows.append(_screen_metrics(normalized, df, market=market))
+                return _screen_metrics(normalized, df, market=market)
             except (IndexError, KeyError, ValueError, TypeError, MarketDataUnavailable):
-                continue
+                return None
+
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            futures = [executor.submit(_enrich, r) for r in metric_rows]
+            for future in as_completed(futures):
+                res = future.result()
+                if res:
+                    enriched_rows.append(res)
         metric_rows = enriched_rows
 
     # Flag SET100 proxy
