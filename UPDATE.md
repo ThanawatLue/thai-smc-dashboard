@@ -35,6 +35,8 @@
    - ระบบเก็บ Cache ผลการสแกนด้วย SQLite Database (`dashboard/state/dashboard.db`) ป้องกันการดึงข้อมูลซ้ำเกินจำเป็น (Cache 1 ชั่วโมง)
 5. **Real-time Data Fetching:**
    - ดึงข้อมูลจาก TradingView Screener API และ Yahoo Finance (`yfinance`) พร้อมระบบ Fallback เมื่อข้อมูลไม่ตอบสนอง
+6. **Automated Market Schedule (GitHub Actions):**
+   - ตั้งเวลาสแกนและอัปเดตข้อมูลอัตโนมัติช่วงเวลาตลาดเปิด (จันทร์–ศุกร์ เวลา 10:00 – 17:00 น. เวลาไทย) ผ่าน `.github/workflows/market_schedule.yml` ทุกๆ 1 ชั่วโมง
 
 ---
 

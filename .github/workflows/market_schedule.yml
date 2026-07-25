@@ -2,8 +2,8 @@ name: Market Hours Auto Scan Schedule
 
 on:
   schedule:
-    # Runs every 30 minutes between 03:00 UTC and 10:00 UTC (10:00 - 17:00 Thai Time) Monday through Friday
-    - cron: '*/30 3-10 * * 1-5'
+    # Runs every 1 hour between 03:00 UTC and 10:00 UTC (10:00 - 17:00 Thai Time) Monday through Friday
+    - cron: '0 3-10 * * 1-5'
   workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
