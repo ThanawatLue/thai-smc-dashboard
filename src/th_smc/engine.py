@@ -935,9 +935,12 @@ def analyze_symbol(
 def scan_symbols(symbols: list[str] | None = None, min_rr: float = 2.0, market: str = "TH") -> dict[str, Any]:
     source_payload = collect_candidate_sources(market=market)
     profiles = {item["symbol"]: item for item in source_payload["candidates"]}
-    selected = [normalize_symbol(item, market) for item in symbols] if symbols else list(profiles.keys())
+    if symbols:
+        selected = [normalize_symbol(item, market) for item in symbols]
+    else:
+        selected = list(profiles.keys())[:40]
     results = []
-    max_workers = min(12, max(1, len(selected)))
+    max_workers = min(4, max(1, len(selected)))
 
     def _analyze_selected(symbol: str) -> dict[str, Any] | None:
         try:
