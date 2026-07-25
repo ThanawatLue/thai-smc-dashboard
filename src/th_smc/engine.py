@@ -533,10 +533,11 @@ def _score_sources(metrics: dict[str, Any]) -> dict[str, tuple[float, str]]:
 
 def collect_candidate_sources(market: str = "TH", limit_per_source: int = 0) -> dict[str, Any]:
     if limit_per_source <= 0:
-        limit_per_source = 15 if market == "US" else 100
+        limit_per_source = 15
 
     metric_rows, universe_meta = load_market_snapshot(market)
     if universe_meta["provider"] != "tradingview":
+        metric_rows = metric_rows[:15]
         enriched_rows: list[dict[str, Any]] = []
 
         def _enrich(row: dict[str, Any]) -> dict[str, Any] | None:
@@ -938,7 +939,7 @@ def scan_symbols(symbols: list[str] | None = None, min_rr: float = 2.0, market: 
     if symbols:
         selected = [normalize_symbol(item, market) for item in symbols]
     else:
-        selected = list(profiles.keys())[:40]
+        selected = list(profiles.keys())[:15]
     results = []
     max_workers = min(4, max(1, len(selected)))
 
