@@ -36,7 +36,9 @@
 5. **Real-time Data Fetching:**
    - ดึงข้อมูลจาก TradingView Screener API และ Yahoo Finance (`yfinance`) พร้อมระบบ Fallback เมื่อข้อมูลไม่ตอบสนอง
 6. **Automated Market Schedule (GitHub Actions):**
-   - ตั้งเวลาสแกนและอัปเดตข้อมูลอัตโนมัติช่วงเวลาตลาดเปิด (จันทร์–ศุกร์ เวลา 10:00 – 17:00 น. เวลาไทย) ผ่าน `.github/workflows/market_schedule.yml` ทุกๆ 1 ชั่วโมง
+   - **ตลาดไทย (TH):** จันทร์–ศุกร์ เวลา 10:00 – 17:00 น. (เวลาไทย) ทุกๆ 1 ชั่วโมง
+   - **ตลาดอเมริกา (US):** จันทร์–ศุกร์ เวลา 20:00 – 04:00 น. (เวลาไทย) ทุกๆ 1 ชั่วโมง
+   - จัดการสแกนและอัปเดตข้อมูลอัตโนมัติผ่าน `.github/workflows/market_schedule.yml`
 
 ---
 
