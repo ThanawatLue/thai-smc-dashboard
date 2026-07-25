@@ -6,8 +6,13 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).parent.resolve()
 ROOT_DIR = BASE_DIR.parent.resolve()
+if str(ROOT_DIR / "src") not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR / "src"))
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
+
 from flask import Flask, render_template, request, jsonify
 from th_smc.engine import scan_symbols, collect_candidate_sources
 from db import SessionLocal, Scan, ScanResult, Base, engine
