@@ -1,0 +1,17 @@
+name: Market Hours Auto Scan Schedule
+
+on:
+  schedule:
+    # Runs every 30 minutes between 03:00 UTC and 10:00 UTC (10:00 - 17:00 Thai Time) Monday through Friday
+    - cron: '*/30 3-10 * * 1-5'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  refresh-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Dashboard Scan Refresh
+        run: |
+          echo "Triggering market scan at $(date)..."
+          curl -s -f "https://thai-smc-dashboard.onrender.com/api/scan?refresh=1&market=TH" > /dev/null
+          echo "Scan refresh completed successfully!"
