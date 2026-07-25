@@ -133,10 +133,8 @@ def api_scan():
         data = clean_nan(scan_symbols(symbols, min_rr=min_rr, market=market))
         return jsonify(data)
 
-    cache_key = f"{market}_{min_rr}"
-    now = time.time()
     cached = _load_scan_cache(min_rr, market)
-    if cached and not refresh and (now - _SCAN_CACHE[cache_key]["at"] < 3600):
+    if cached and not refresh:
         return jsonify(clean_nan(cached))
 
     try:
@@ -145,6 +143,8 @@ def api_scan():
         _save_scan_cache(data, min_rr, market)
         return jsonify(data)
     except Exception as e:
+        if cached:
+            return jsonify(clean_nan(cached))
         return jsonify({"error": str(e)}), 500
 
 
