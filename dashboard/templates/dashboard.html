@@ -2477,7 +2477,20 @@ function copyXrayTextSummary() {
     txt += `- Capital Efficiency: ROE ${(fin.roe_pct || 0).toFixed(1)}% | Net Debt/Equity: ${(fin.debt_to_equity || 0).toFixed(2)}\n\n`;
     txt += `## 4. Moat & Pre-Mortem Risks\n`;
     txt += `- Competitive Moats:\n` + moats.map(m => `  * ${m}`).join('\n') + `\n`;
-    txt += `- Pre-Mortem (Failure Modes):\n` + pm.map(p => `  * ${p}`).join('\n') + `\n`;
+    txt += `- Pre-Mortem (Failure Modes):\n` + pm.map(p => `  * ${p}`).join('\n') + `\n\n`;
+
+    const consensus = d.analyst_consensus || {};
+    const verdict = d.investment_verdict || {};
+
+    txt += `## 5. Wall Street Analyst Consensus & Price Targets\n`;
+    txt += `- Consensus Rating: ${consensus.recommendation_th || consensus.recommendation || 'N/A'} (จากนักวิเคราะห์ ${consensus.number_of_analysts || 'N/A'} ท่าน)\n`;
+    txt += `- Target Price: Mean $${consensus.target_mean || 'N/A'} (Range: $${consensus.target_low || 'N/A'} - $${consensus.target_high || 'N/A'})\n`;
+    if (consensus.upside_mean_pct !== undefined && consensus.upside_mean_pct !== null) {
+      txt += `- Upside to Mean: ${consensus.upside_mean_pct > 0 ? '+' : ''}${consensus.upside_mean_pct}% vs Current ($${(d.current_price || 0).toFixed(2)})\n\n`;
+    }
+    txt += `## 6. Investment Verdict & Strategic Action\n`;
+    txt += `- Verdict: ${verdict.action || 'HOLD'}\n`;
+    txt += `- Summary: ${verdict.summary || ''}\n`;
   } else {
     const p = lastXrayPayload;
     const ps = p.risk_return?.portfolio || {};
@@ -2487,6 +2500,8 @@ function copyXrayTextSummary() {
     const ov = p.overlap || {};
     const rc = p.risk_return?.risk_contribution || [];
     const reb = p.risk_return?.rebalancing_plan || [];
+    const fee = p.fee_analysis || {};
+    const stress = p.macro_stress_test || [];
 
     txt = `# AI PORTFOLIO X-RAY PRO ANALYSIS\n`;
     txt += `Portfolio Size: ${(p.risk_return?.portfolio_value || 1000000).toLocaleString()} ${p.risk_return?.currency || 'THB'} | Horizon: ${p.risk_return?.period || '3y'}\n\n`;
@@ -2501,6 +2516,8 @@ function copyXrayTextSummary() {
     (p.assets || []).forEach(a => {
       txt += `- ${a.symbol} (${a.name || a.symbol}): ${a.weight_pct}% | Role: ${a.role || 'CORE'} | TER: ${((a.expense_ratio || 0)*100).toFixed(2)}%\n`;
     });
+    txt += `- Blended TER: ${fee.blended_expense_ratio_pct || 0}% (~${(fee.annual_fee_drag_cash || 0).toLocaleString()} ${p.risk_return?.currency || 'THB'}/year) [${fee.verdict || ''}]\n`;
+
     txt += `\n## 3. Look-Through Top Effective Exposure\n`;
     (lt.top_holdings || []).slice(0, 10).forEach(h => {
       txt += `- ${h.symbol} (${h.name || h.symbol}): ${h.effective_pct}% via [${(h.sources || []).join(', ')}]\n`;
@@ -2524,6 +2541,12 @@ function copyXrayTextSummary() {
       });
     } else {
       txt += `- พอร์ตมีความสมดุลของความเสี่ยงในเกณฑ์ดี ไม่จำเป็นต้อง Rebalance เร่งด่วน\n`;
+    }
+    if (stress && stress.length > 0) {
+      txt += `\n## 7. Macro Stress Test & Sensitivity Matrix\n`;
+      stress.forEach(s => {
+        txt += `- ${s.name_th}: Impact ${s.impact_pct > 0 ? '+' : ''}${s.impact_pct}% (${s.impact_cash > 0 ? '+' : ''}${s.impact_cash.toLocaleString()} ${p.risk_return?.currency || 'THB'}) | Cushion: ${s.cushion_asset} (${s.explanation})\n`;
+      });
     }
   }
 
@@ -2618,12 +2641,23 @@ function renderXrayPortfolio(payload) {
     </div>
   `;
 
+  const feeAnalysis = payload.fee_analysis || {};
+  const stressTest = payload.macro_stress_test || [];
+
   // Stated Allocation Table
   html += `
     <div class="card-box" style="padding:20px;">
-      <div style="margin-bottom:14px;">
-        <h3 style="font-family:var(--font-display); font-size:1.05rem; font-weight:700; color:var(--text);">Stated Asset Allocation & Roles</h3>
-        <p style="font-size:0.78rem; color:var(--muted);">สัดส่วนและบทบาทของแต่ละสินทรัพย์ในพอร์ต</p>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+        <div>
+          <h3 style="font-family:var(--font-display); font-size:1.05rem; font-weight:700; color:var(--text);">Stated Asset Allocation & Roles</h3>
+          <p style="font-size:0.78rem; color:var(--muted);">สัดส่วนและบทบาทของแต่ละสินทรัพย์ในพอร์ต</p>
+        </div>
+        <div style="text-align:right;">
+          <span class="stat-badge blue" style="font-size:0.75rem;">
+            Blended TER: ${(feeAnalysis.blended_expense_ratio_pct || 0).toFixed(3)}% (~${(feeAnalysis.annual_fee_drag_cash || 0).toLocaleString()} ${currency}/ปี)
+          </span>
+          <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">${feeAnalysis.verdict || ''}</div>
+        </div>
       </div>
       <div class="table-wrap">
         <table>
@@ -2794,6 +2828,63 @@ function renderXrayPortfolio(payload) {
             ${item}
           </div>
         `).join('')}
+      </div>
+    `;
+  }
+
+  // Educational Box: Overlap vs Correlation
+  html += `
+    <div class="card-box" style="padding:20px; background:var(--bg-subtle); border-left:4px solid var(--primary);">
+      <div style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--primary); margin-bottom:8px;">
+        💡 INVESTMENT TEACHER: เข้าใจความต่างระหว่าง "Overlap" กับ "Correlation"
+      </div>
+      <div style="font-size:0.83rem; color:var(--text); line-height:1.6;">
+        <p style="margin-bottom:6px;">
+          <strong>1. Overlap (การถือครองซ้ำซ้อน):</strong> คือ <em>"พอร์ตกำลังถือหุ้นชิ้นเดียวกันหรือไม่?"</em> เช่น ถือ VOO คู่กับ QQQM ไส้ในมีทั้ง NVDA, AAPL, MSFT ซ้ำกัน เมื่อหุ้น Big Tech ผันผวน ทั้งสองกองทุนจะกระทบจากจุดเดียวกัน
+        </p>
+        <p>
+          <strong>2. Correlation (สหสัมพันธ์การเคลื่อนไหวราคา):</strong> คือ <em>"ราคามักวิ่งไปในทิศทางเดียวกันหรือไม่?"</em> สินทรัพย์อาจไม่มีหุ้นซ้ำกันเลย (Overlap 0%) เช่น หุ้นเทคโนโลยี กับ Bitcoin หรือสินค้าโภคภัณฑ์ แต่ในช่วงที่เกิดวิกฤตสภาพคล่อง ราคาอาจร่วงลงพร้อมกันได้
+        </p>
+      </div>
+    </div>
+  `;
+
+  // Macro Stress Test & Sensitivity Matrix
+  if (stressTest && stressTest.length > 0) {
+    html += `
+      <div class="card-box" style="padding:20px;">
+        <div style="margin-bottom:12px;">
+          <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text);">Macro Stress Test & Scenario Sensitivity Matrix</h3>
+          <p style="font-size:0.75rem; color:var(--muted);">จำลองแรงกระแทกต่อพอร์ตภายใต้ 4 วิกฤตการณ์เศรษฐกิจมหภาค</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Scenario / วิกฤตการณ์</th>
+                <th>Estimated Shock</th>
+                <th>Estimated PnL (${currency})</th>
+                <th>Cushion / Defensive Asset</th>
+                <th>กลไกทางเศรษฐกิจ</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${stressTest.map(st => `
+                <tr>
+                  <td><strong>${st.name_th}</strong></td>
+                  <td style="font-family:var(--font-mono); font-weight:700; color:${st.impact_pct < 0 ? 'var(--rose)' : 'var(--emerald)'};">
+                    ${st.impact_pct >= 0 ? '+' : ''}${st.impact_pct.toFixed(2)}%
+                  </td>
+                  <td style="font-family:var(--font-mono); font-weight:600; color:${st.impact_cash < 0 ? 'var(--rose)' : 'var(--emerald)'};">
+                    ${st.impact_cash >= 0 ? '+' : ''}${st.impact_cash.toLocaleString()} ${currency}
+                  </td>
+                  <td><span class="stat-badge blue">${st.cushion_asset}</span></td>
+                  <td style="font-size:0.75rem; color:var(--muted);">${st.explanation}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
       </div>
     `;
   }
@@ -3086,6 +3177,55 @@ function renderXrayThesis(payload) {
           `).join('')}
         </div>
       </div>
+    </div>
+
+    <!-- Wall Street Analyst Consensus Card -->
+    <div class="card-box" style="padding:22px;">
+      <div style="margin-bottom:14px;">
+        <h3 style="font-family:var(--font-display); font-size:1.1rem; font-weight:700; color:var(--text);">Wall Street Analyst Consensus & Price Targets</h3>
+        <p style="font-size:0.8rem; color:var(--muted);">มุมมองและราคาเป้าหมายจากนักวิเคราะห์สถาบันชั้นนำ</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px;">
+        <div style="background:var(--bg-subtle); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border);">
+          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">Consensus Rating</div>
+          <div style="font-size:1.2rem; font-weight:800; color:var(--primary); margin:4px 0;">
+            ${consensus.recommendation_th || consensus.recommendation || 'N/A'}
+          </div>
+          <div style="font-size:0.75rem; color:var(--muted);">จากนักวิเคราะห์ทั้งหมด: ${consensus.number_of_analysts || 'N/A'} ท่าน</div>
+        </div>
+
+        <div style="background:var(--bg-subtle); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border);">
+          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">Target Price (Mean / High / Low)</div>
+          <div style="font-family:var(--font-mono); font-size:1.3rem; font-weight:800; color:var(--text); margin:4px 0;">
+            $${consensus.target_mean || 'N/A'} <span style="font-size:0.8rem; font-weight:normal; color:var(--muted);">($${consensus.target_low || 'N/A'} - $${consensus.target_high || 'N/A'})</span>
+          </div>
+          <div style="font-size:0.75rem; color:${(consensus.upside_mean_pct || 0) >= 0 ? 'var(--emerald)' : 'var(--rose)'}; font-weight:600;">
+            Upside to Mean: ${(consensus.upside_mean_pct !== undefined && consensus.upside_mean_pct !== null) ? ((consensus.upside_mean_pct >= 0 ? '+' : '') + consensus.upside_mean_pct + '%') : 'N/A'} vs Current
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Investment Verdict Card -->
+    <div class="card-box" style="padding:22px; border-left:4px solid var(--primary); background:var(--surface);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+        <div>
+          <div style="font-size:0.72rem; text-transform:uppercase; font-weight:700; color:var(--muted); letter-spacing:0.04em;">Investment Verdict</div>
+          <h3 style="font-family:var(--font-display); font-size:1.25rem; font-weight:800; color:var(--primary); margin-top:2px;">
+            ${(data.investment_verdict?.action) || 'HOLD'}
+          </h3>
+        </div>
+        ${(data.investment_verdict?.base_fair_value) ? `
+          <div style="text-align:right;">
+            <span style="font-size:0.72rem; color:var(--muted);">Base Case Fair Value:</span>
+            <div style="font-family:var(--font-mono); font-size:1.1rem; font-weight:800; color:var(--text);">$${(data.investment_verdict.base_fair_value || 0).toFixed(2)}</div>
+          </div>
+        ` : ''}
+      </div>
+      <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
+        ${(data.investment_verdict?.summary) || ''}
+      </p>
     </div>
   `;
 

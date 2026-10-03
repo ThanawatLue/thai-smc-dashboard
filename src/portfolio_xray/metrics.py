@@ -412,3 +412,124 @@ def calculate_risk_return(
         "rebalancing_plan": rebalancing_plan,
     }
 
+
+def calculate_fee_drag(
+    assets: List[dict],
+    portfolio_value: float = 1_000_000,
+    currency: str = "THB",
+) -> dict:
+    """
+    Computes weighted average expense ratio (Blended TER) and annual fee drag in cash.
+    """
+    total_w = sum(float(a.get("weight", 0.0)) for a in assets) or 1.0
+    blended_ter = sum(float(a.get("weight", 0.0)) * float(a.get("expense_ratio", 0.0)) for a in assets) / total_w
+    annual_drag = portfolio_value * blended_ter
+    five_year_drag = portfolio_value * ((1.0 + blended_ter) ** 5 - 1.0)
+
+    verdict = (
+        "ต้นทุนต่ำพิเศษ (Ultra-Low Cost)"
+        if blended_ter < 0.0015
+        else (
+            "ต้นทุนต่ำตามมาตรฐาน (Low Cost)"
+            if blended_ter < 0.004
+            else "ต้นทุนปานกลาง-สูง (ควรพิจารณาค่าธรรมเนียม)"
+        )
+    )
+
+    return {
+        "blended_expense_ratio_pct": round(blended_ter * 100, 3),
+        "annual_fee_drag_cash": round(annual_drag, 2),
+        "five_year_cumulative_drag_cash": round(five_year_drag, 2),
+        "currency": currency,
+        "verdict": verdict,
+    }
+
+
+def calculate_macro_stress_test(
+    assets: List[dict],
+    portfolio_value: float = 1_000_000,
+    currency: str = "THB",
+) -> List[dict]:
+    """
+    Simulates portfolio resilience across 4 institutional macro stress scenarios.
+    """
+    total_w = sum(float(a.get("weight", 0.0)) for a in assets) or 1.0
+
+    tech_weight = 0.0
+    bond_weight = 0.0
+    gold_weight = 0.0
+    crypto_weight = 0.0
+    equity_weight = 0.0
+
+    for a in assets:
+        sym = a["symbol"].upper()
+        w = float(a.get("weight", 0.0)) / total_w
+        aclass = a.get("asset_class", "").lower()
+
+        if "crypto" in aclass or "BTC" in sym or "ETH" in sym:
+            crypto_weight += w
+        elif "commodity" in aclass or "GLD" in sym or "gold" in aclass:
+            gold_weight += w
+        elif "fixed income" in aclass or "bond" in aclass or "TLT" in sym or "BND" in sym:
+            bond_weight += w
+        else:
+            equity_weight += w
+            if "QQQ" in sym or "SMH" in sym or "SOXX" in sym or "NVDA" in sym:
+                tech_weight += w
+            else:
+                tech_weight += w * 0.30
+
+    other_equity_w = max(0.0, equity_weight - tech_weight)
+
+    # 1. Tech Multiple De-Rating (-20% Nasdaq, broad equity -8%, bond +2%, gold +1%, crypto -15%)
+    s1_pct = (tech_weight * -0.22) + (other_equity_w * -0.08) + (bond_weight * 0.02) + (gold_weight * 0.01) + (crypto_weight * -0.15)
+    s1_val = portfolio_value * s1_pct
+
+    # 2. Interest Rate Shock (+100 bps yield hike: bond -15%, tech -12%, other equity -4%, gold -5%, crypto -10%)
+    s2_pct = (bond_weight * -0.15) + (tech_weight * -0.12) + (other_equity_w * -0.04) + (gold_weight * -0.05) + (crypto_weight * -0.10)
+    s2_val = portfolio_value * s2_pct
+
+    # 3. Global Recession (-30% S&P 500, crypto -45%, bond +10%, gold +12%)
+    s3_pct = (equity_weight * -0.30) + (crypto_weight * -0.45) + (bond_weight * 0.10) + (gold_weight * 0.12)
+    s3_val = portfolio_value * s3_pct
+
+    # 4. Stagflation (Equities -12%, Bonds -8%, Gold +20%, Crypto +10%)
+    s4_pct = (equity_weight * -0.12) + (bond_weight * -0.08) + (gold_weight * 0.20) + (crypto_weight * 0.10)
+    s4_val = portfolio_value * s4_pct
+
+    return [
+        {
+            "scenario": "Tech & Growth De-Rating",
+            "name_th": "หุ้นเทคโนโลยีและ Growth ปรับฐาน (-20% Nasdaq)",
+            "impact_pct": round(s1_pct * 100, 2),
+            "impact_cash": round(s1_val, 2),
+            "cushion_asset": "พันธบัตร (Bonds) / ทองคำ (Gold)" if (bond_weight + gold_weight) > 0.05 else "ไม่มีสินทรัพย์รับแรงกระแทก",
+            "explanation": "หุ้นกลุ่ม High Beta และ Valuation สูงจะถูก De-rate จาก Multiple P/E ที่หดตัว",
+        },
+        {
+            "scenario": "Interest Rate Shock",
+            "name_th": "อัตราดอกเบี้ยพุ่งขึ้น (+100 bps Bond Yield)",
+            "impact_pct": round(s2_pct * 100, 2),
+            "impact_cash": round(s2_val, 2),
+            "cushion_asset": "หุ้นปันผล (Value/Dividend) / เงินสด" if other_equity_w > 0.10 else "ไม่มีเกราะป้องกันดอกเบี้ย",
+            "explanation": "พันธบัตรระยะยาวจะขาดทุนจากราคาหน้าตั๋วลดลง และต้นทุนการเงินจะกดดัน Growth Multiple",
+        },
+        {
+            "scenario": "Global Recession",
+            "name_th": "เศรษฐกิจถดถอยและตลาดหุ้นร่วงแรง (-30% S&P 500)",
+            "impact_pct": round(s3_pct * 100, 2),
+            "impact_cash": round(s3_val, 2),
+            "cushion_asset": "พันธบัตรรัฐบาล (TLT) / ทองคำ (GLD)" if (bond_weight + gold_weight) > 0.05 else "ไม่มีสินทรัพย์หลบภัย (Flight-to-Safety)",
+            "explanation": "เงินไหลออกจากสินทรัพย์เสี่ยงเข้าสู่สินทรัพย์ปลอดภัย (Flight-to-Safety) เพื่อจำกัด Drawdown",
+        },
+        {
+            "scenario": "Stagflation Crisis",
+            "name_th": "เงินเฟ้อค้างสูงพร้อมเศรษฐกิจชะลอตัว (Stagflation)",
+            "impact_pct": round(s4_pct * 100, 2),
+            "impact_cash": round(s4_val, 2),
+            "cushion_asset": "ทองคำ (GLD) / สินทรัพย์จริง" if gold_weight > 0.05 else "เสี่ยงต่อภาวะเงินเฟ้อกัดกินมูลค่า",
+            "explanation": "ทั้งหุ้นและพันธบัตรจะลงพร้อมกัน มีเพียงทองคำและสินค้าโภคภัณฑ์ที่ช่วยรักษากำลังซื้อ",
+        },
+    ]
+
+

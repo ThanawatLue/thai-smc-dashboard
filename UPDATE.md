@@ -58,12 +58,17 @@
      - **Variance Attribution / Risk Contribution (%RC):** แยกองค์ประกอบความเสี่ยงจริงของแต่ละสินทรัพย์ผ่าน Covariance Matrix ($\%RC_i = \frac{w_i (\Sigma w)_i}{\sigma_p^2} \times 100\%$) เพื่อดูว่าสินทรัพย์ไหนเป็นตัวสร้างความผันผวนหลัก (Risk Dominator)
      - **Position Sizing & Rebalancing Action Plan:** ให้คำแนะนำปรับสัดส่วนเพื่อควบคุม Drawdown โดยคำนวณเป็นเปอร์เซ็นต์และเม็ดเงินจริงที่ควร TRIM หรือ Rebalance
      - **Concentration Analysis (HHI):** คำนวณ Herfindahl-Hirschman Index และจำนวนการเดิมพันอิสระ ($N_{\text{eff}} = 1/HHI$)
+      - **Educational Callout "Overlap vs Correlation":** กล่องคำอธิบายเชิงการศึกษาตาม Master Prompt Section 7 ให้ผู้ใช้เข้าใจลึกซึ้งว่าการถือหุ้นซ้ำ (Overlap) ต่างจากการที่ราคาวิ่งตามกัน (Correlation) อย่างไร
+      - **Blended Portfolio Expense Ratio (Fee Drag):** คำนวณค่าธรรมเนียมรวมถ่วงน้ำหนัก (Blended TER %) และคำนวณเงินค่าธรรมเนียมที่ถูก Drag จริงต่อปี (Annual Cash Drag) และสะสม 5 ปี เพื่อเตือนสตินักลงทุนเรื่องต้นทุนกองทุน
+      - **Macro Stress Test & Sensitivity Matrix:** ตารางจำลอง 4 วิกฤตการณ์เศรษฐกิจมหภาค: (1) Tech De-Rating, (2) Rate Shock, (3) Global Recession, (4) Stagflation Crisis พร้อมคำนวณผลกระทบเป็น % และเม็ดเงินจริง และระบุ Cushion Asset
      - **CAGR, Annualized Volatility, Sharpe, Sortino, Calmar:** เปรียบเทียบเคียงข้างกับ S&P 500 (VOO Total Return)
    - **Deep Thesis & Reverse DCF Mode (เมื่อใส่หุ้นเดี่ยว 1 ตัว เช่น NVDA, RKLB):**
      - **Reverse DCF Implied Growth Solver:** ใช้ Bisection Algorithm คำนวณหาอัตราการเติบโตของ Free Cash Flow (FCF CAGR) เฉลี่ย 10 ปี ที่ตลาดกำลังสะท้อนอยู่ในราคาปัจจุบัน
      - **Reality Check & Scenarios:** ประเมินความสมเหตุสมผลของความคาดหวังตลาด และคำนวณราคาเหมาะสม 3 รูปแบบ (Bear / Base / Bull) พร้อม Margin of Safety
      - **Total Addressable Market (TAM) & S-Curve Analysis:** ประเมินขนาดโอกาสทางการตลาด ($B), Current Penetration %, S-Curve Lifecycle Stage, และ Key Structural Growth Catalysts
      - **3-Year Historical Financials Trend:** แสดงตารางย้อนหลังของรายได้ (Revenue), Gross Margin %, Operating Income, Operating Margin % และ Net Income
+      - **Wall Street Analyst Consensus & Price Targets:** แสดง Consensus Rating (Strong Buy/Buy/Hold/Sell แปลไทย), จำนวนนักวิเคราะห์, กรอบราคาเป้าหมาย Target Price (Mean / High / Low) และคำนวณ Upside to Mean %
+      - **Investment Verdict & Strategic Action:** สรุปบทวิเคราะห์เชิงกลยุทธ์ชี้ชัดการกระทำ (ACCUMULATE / HOLD / WAIT / CAUTION) พร้อม Base Case Fair Value และสรุปตรรกะความคุ้มค่า/ความเสี่ยงในการลงทุน
      - **Competitive Moat Analysis & Pre-Mortem:** วิเคราะห์คูเมืองธุรกิจ (Pricing power, High ROIC, Switching costs) และระบุข้อผิดพลาดที่จะทำให้ Thesis ล้มเหลว
    - **Standalone HTML Dashboard Export & One-Click Markdown Copy:**
      - ปุ่ม **HTML Export:** สร้างรายงาน HTML แบบ Single File ที่สมบูรณ์ในตัวเอง มีกราฟ ECharts/Chart.js ฝังพร้อมเปิดดูหรือแชร์ได้โดยไม่ต้องพึ่ง Server
@@ -71,6 +76,9 @@
    - **API Routes:**
      - `POST /api/xray/analyze` (JSON analysis)
      - `POST /api/xray/export-html` (Downloadable HTML report)
+    - **Quality Assurance & End-to-End Testing (E2E):**
+      - Unit Tests: 21/21 Automated Tests ผ่าน 100% ใน tests/test_portfolio_xray.py และ tests/test_engine.py
+      - Browser E2E Testing: ผ่านการทดสอบด้วย Chrome DevTools MCP ทั้งโหมด Portfolio (Blended TER, Overlap vs Correlation, Macro Stress Test 4 Scenarios) และโหมด Deep Thesis (Consensus Rating, Price Target Range, Investment Verdict, Reverse DCF) ตรวจสอบแล้วไม่มี JavaScript Console Errors ใดๆ ทั้งสิ้น
 
 ---
 

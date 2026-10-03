@@ -16,6 +16,8 @@ from src.portfolio_xray.metrics import (
     calculate_overlap_matrix,
     calculate_concentration,
     calculate_risk_return,
+    calculate_fee_drag,
+    calculate_macro_stress_test,
 )
 from src.portfolio_xray.deep_thesis import generate_deep_thesis
 from src.portfolio_xray.html_generator import (
@@ -94,6 +96,18 @@ def analyze(
         benchmark_symbol=benchmark_symbol,
     )
 
+    # Calculate Fee Drag & Macro Stress Test
+    fee_analysis = calculate_fee_drag(
+        assets=enriched_assets,
+        portfolio_value=portfolio_value,
+        currency=currency,
+    )
+    macro_stress_test = calculate_macro_stress_test(
+        assets=enriched_assets,
+        portfolio_value=portfolio_value,
+        currency=currency,
+    )
+
     result_payload = {
         "mode": "portfolio",
         "assets": enriched_assets,
@@ -104,6 +118,8 @@ def analyze(
         "overlap": overlap,
         "concentration": concentration,
         "risk_return": risk_return,
+        "fee_analysis": fee_analysis,
+        "macro_stress_test": macro_stress_test,
         "raw_input": raw_input,
     }
 

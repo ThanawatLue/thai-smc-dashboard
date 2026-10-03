@@ -224,5 +224,55 @@ def test_html_generator_renders_new_sections():
     t_html = generate_thesis_html_report(sample_thesis)
     assert "Total Addressable Market (TAM)" in t_html
     assert "Historical Financial Trend" in t_html
+    assert "Wall Street Analyst Consensus" in t_html
+    assert "Investment Verdict" in t_html
+
+
+def test_fee_drag_calculation():
+    from src.portfolio_xray.metrics import calculate_fee_drag
+
+    assets = [
+        {"symbol": "VOO", "weight": 0.5, "expense_ratio": 0.0003},
+        {"symbol": "QQQM", "weight": 0.5, "expense_ratio": 0.0015},
+    ]
+    res = calculate_fee_drag(assets, portfolio_value=1_000_000, currency="THB")
+    assert "blended_expense_ratio_pct" in res
+    assert 0.08 <= res["blended_expense_ratio_pct"] <= 0.10
+    assert "annual_fee_drag_cash" in res
+    assert res["annual_fee_drag_cash"] > 0
+
+
+def test_macro_stress_test_calculation():
+    from src.portfolio_xray.metrics import calculate_macro_stress_test
+
+    assets = [
+        {"symbol": "VOO", "weight": 0.4, "asset_class": "Equity"},
+        {"symbol": "QQQM", "weight": 0.2, "asset_class": "Equity"},
+        {"symbol": "TLT", "weight": 0.2, "asset_class": "Fixed Income"},
+        {"symbol": "GLD", "weight": 0.1, "asset_class": "Commodity"},
+        {"symbol": "BTC-USD", "weight": 0.1, "asset_class": "Crypto"},
+    ]
+    res = calculate_macro_stress_test(assets, portfolio_value=1_000_000, currency="THB")
+    assert len(res) == 4
+    scenarios = [s["scenario"] for s in res]
+    assert "Tech & Growth De-Rating" in scenarios
+    assert "Global Recession" in scenarios
+    for s in res:
+        assert "impact_pct" in s
+        assert "impact_cash" in s
+        assert "cushion_asset" in s
+
+
+def test_analyst_consensus_and_verdict():
+    from src.portfolio_xray.deep_thesis import generate_deep_thesis
+
+    res = generate_deep_thesis("NVDA")
+    assert "analyst_consensus" in res
+    consensus = res["analyst_consensus"]
+    assert "recommendation" in consensus
+    assert "recommendation_th" in consensus
+    assert "investment_verdict" in res
+    assert "action" in res["investment_verdict"]
+
 
 

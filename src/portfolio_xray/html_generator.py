@@ -26,6 +26,8 @@ def generate_portfolio_html_report(xray_data: dict) -> str:
     port_val = risk_return.get("portfolio_value", 1_000_000)
     currency = risk_return.get("currency", "THB")
     eq_warning = xray_data.get("equal_weight_warning")
+    fee_analysis = xray_data.get("fee_analysis", {})
+    stress_test = xray_data.get("macro_stress_test", [])
 
     # Dates and series for charting
     dates_json = json.dumps(port_stats.get("dates", []))
@@ -306,7 +308,12 @@ def generate_portfolio_html_report(xray_data: dict) -> str:
 
     <!-- Portfolio Stated Holdings Table -->
     <div class="card">
-      <div class="card-title">Stated Asset Allocation & Roles</div>
+      <div class="card-title">
+        <span>Stated Asset Allocation & Roles</span>
+        <span style="font-size: 12px; font-weight: normal; color: var(--text-muted);">
+          Blended TER: {fee_analysis.get('blended_expense_ratio_pct', 0):.3f}% (~{fee_analysis.get('annual_fee_drag_cash', 0):,.0f} {currency}/year)
+        </span>
+      </div>
       <table>
         <thead>
           <tr>
@@ -409,6 +416,57 @@ def generate_portfolio_html_report(xray_data: dict) -> str:
         '''}
       </div>
     </div>
+
+    <!-- Educational Callout: Overlap vs Correlation -->
+    <div class="card" style="background: #f8fafc; border-left: 4px solid var(--indigo-accent);">
+      <div style="font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--indigo-accent); margin-bottom: 8px;">
+        💡 INVESTMENT TEACHER: เข้าใจความต่างระหว่าง "Overlap" กับ "Correlation"
+      </div>
+      <div style="font-size: 13px; color: #334155; line-height: 1.6;">
+        <p style="margin-bottom: 6px;">
+          <strong>1. Overlap (การถือครองซ้ำซ้อน):</strong> คือ <em>"พอร์ตกำลังถือหุ้นชิ้นเดียวกันหรือไม่?"</em> เช่น ถือ VOO คู่กับ QQQM ไส้ในมีทั้ง NVDA, AAPL, MSFT ซ้ำกัน เมื่อหุ้น Big Tech ผันผวน ทั้งสองกองทุนจะกระทบจากจุดเดียวกัน
+        </p>
+        <p>
+          <strong>2. Correlation (สหสัมพันธ์การเคลื่อนไหวราคา):</strong> คือ <em>"ราคามักวิ่งไปในทิศทางเดียวกันหรือไม่?"</em> สินทรัพย์อาจไม่มีหุ้นซ้ำกันเลย (Overlap 0%) เช่น หุ้นเทคโนโลยี กับ Bitcoin หรือสินค้าโภคภัณฑ์ แต่ในช่วงที่เกิดวิกฤตสภาพคล่อง ราคาอาจร่วงลงพร้อมกันได้
+        </p>
+      </div>
+    </div>
+
+    <!-- Macro Stress Test & Sensitivity Matrix -->
+    {f'''
+    <div class="card">
+      <div class="card-title">Macro Stress Test & Scenario Sensitivity Matrix</div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+        การจำลองแรงกระแทกต่อพอร์ตภายใต้ 4 สถานการณ์วิกฤตเศรษฐกิจระดับมหภาค
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Scenario / วิกฤตการณ์</th>
+            <th>Estimated Shock</th>
+            <th>Estimated PnL ({currency})</th>
+            <th>Cushion / Defensive Asset</th>
+            <th>กลไกทางเศรษฐกิจ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {''.join([f"""
+          <tr>
+            <td><strong>{st['name_th']}</strong></td>
+            <td style="font-family: var(--font-mono); font-weight: 700; color: {'var(--rose-accent)' if st['impact_pct'] < 0 else 'var(--emerald-accent)'};">
+              {st['impact_pct']:+.2f}%
+            </td>
+            <td style="font-family: var(--font-mono); font-weight: 600; color: {'var(--rose-accent)' if st['impact_cash'] < 0 else 'var(--emerald-accent)'};">
+              {st['impact_cash']:+,.0f} {currency}
+            </td>
+            <td><span class="badge" style="background: #eef2ff; color: #4338ca;">{st['cushion_asset']}</span></td>
+            <td style="color: var(--text-muted); font-size: 12px;">{st['explanation']}</td>
+          </tr>
+          """ for st in stress_test])}
+        </tbody>
+      </table>
+    </div>
+    ''' if stress_test else ''}
 
   </div>
 
@@ -524,6 +582,8 @@ def generate_thesis_html_report(thesis_data: dict) -> str:
     pre_mortem = thesis_data.get("pre_mortem", [])
     tam = thesis_data.get("tam_analysis", {})
     hist_fin = thesis_data.get("historical_financials", [])
+    consensus = thesis_data.get("analyst_consensus", {})
+    verdict = thesis_data.get("investment_verdict", {})
 
     cur_p = thesis_data.get("current_price", 0.0)
     implied_g = dcf.get("implied_fcf_growth_pct", "N/A")
@@ -773,6 +833,41 @@ def generate_thesis_html_report(thesis_data: dict) -> str:
     <div class="card">
       <div class="card-title" style="color: var(--rose-accent);">Pre-Mortem — อะไรทำให้ Thesis นี้ล้มเหลว?</div>
       {''.join([f'<div style="font-size: 13px; margin-bottom: 8px; color: #475569;">{item}</div>' for item in pre_mortem])}
+    </div>
+
+    <!-- Wall Street Analyst Consensus -->
+    <div class="card">
+      <div class="card-title">Wall Street Analyst Consensus & Price Targets</div>
+      <div class="grid-2" style="margin-bottom: 14px;">
+        <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-muted);">Consensus Rating</div>
+          <div style="font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--indigo-accent); margin: 4px 0;">
+            {consensus.get('recommendation_th', 'N/A')}
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted);">จากนักวิเคราะห์ทั้งหมด: {consensus.get('number_of_analysts', 'N/A')} ท่าน</div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-muted);">Target Price Range (Mean / High / Low)</div>
+          <div style="font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text-main); margin: 4px 0;">
+            ${consensus.get('target_mean', 'N/A')} <span style="font-size: 12px; font-weight: normal; color: var(--text-muted);">(${consensus.get('target_low', 'N/A')} - ${consensus.get('target_high', 'N/A')})</span>
+          </div>
+          <div style="font-size: 12px; color: {'var(--emerald-accent)' if (consensus.get('upside_mean_pct') or 0) >= 0 else 'var(--rose-accent)'}; font-weight: 600;">
+            Upside to Mean: {(consensus.get('upside_mean_pct') or 0):+.1f}% vs Current (${cur_p:.2f})
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Investment Verdict & Strategic Action -->
+    <div class="card" style="border-left: 4px solid var(--indigo-accent);">
+      <div class="card-title">Investment Verdict & Strategic Action</div>
+      <div style="font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--indigo-accent); margin-bottom: 6px;">
+        {verdict.get('action', 'HOLD')}
+      </div>
+      <p style="font-size: 13px; color: #334155; line-height: 1.6;">
+        {verdict.get('summary', '')}
+      </p>
     </div>
   </div>
 </body>

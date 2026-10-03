@@ -223,11 +223,43 @@ def generate_deep_thesis(symbol: str) -> dict:
             "dividend_yield_pct": round(float(div_yield) * 100, 2),
         },
         "analyst_consensus": {
-            "target_mean": target_mean,
-            "target_high": target_high,
-            "target_low": target_low,
+            "target_mean": round(float(target_mean), 2) if target_mean else "N/A",
+            "target_high": round(float(target_high), 2) if target_high else "N/A",
+            "target_low": round(float(target_low), 2) if target_low else "N/A",
+            "upside_mean_pct": round(((float(target_mean) - current_price) / current_price) * 100, 1) if target_mean and current_price > 0 else None,
+            "upside_high_pct": round(((float(target_high) - current_price) / current_price) * 100, 1) if target_high and current_price > 0 else None,
+            "upside_low_pct": round(((float(target_low) - current_price) / current_price) * 100, 1) if target_low and current_price > 0 else None,
             "recommendation": recommendation,
-            "number_of_analysts": num_analysts,
+            "recommendation_th": {
+                "STRONG_BUY": "แนะนำซื้ออย่างยิ่ง (Strong Buy)",
+                "BUY": "แนะนำซื้อ (Buy / Outperform)",
+                "HOLD": "ถือลงทุน (Hold / Neutral)",
+                "UNDERPERFORM": "ลดน้ำหนักการลงทุน (Underperform)",
+                "SELL": "แนะนำขาย (Sell)",
+            }.get(recommendation, recommendation),
+            "number_of_analysts": num_analysts or "N/A",
+        },
+        "investment_verdict": {
+            "action": (
+                "ACCUMULATE (ทยอยสะสม)"
+                if dcf_result.get("scenarios", {}).get("base", {}).get("upside_downside_pct", 0.0) > 15.0 and roe > 0.15
+                else (
+                    "HOLD / NEUTRAL (ถือรอจังหวะ)"
+                    if dcf_result.get("scenarios", {}).get("base", {}).get("upside_downside_pct", 0.0) >= -10.0
+                    else "WAIT / CAUTION (รอจังหวะย่อตัว)"
+                )
+            ),
+            "summary": (
+                "Fair Value สูงกว่าราคาตลาด และความสามารถในการทำกำไร (ROE) อยู่ในเกณฑ์แข็งแกร่ง เหมาะสำหรับทยอยสะสมตามรอบ"
+                if dcf_result.get("scenarios", {}).get("base", {}).get("upside_downside_pct", 0.0) > 15.0 and roe > 0.15
+                else (
+                    "ราคาปัจจุบันสะท้อนการเติบโตส่วนใหญ่ไปแล้ว (Fairly Valued) ควรถือรอการพิสูจน์ผลประกอบการไตรมาสถัดไป"
+                    if dcf_result.get("scenarios", {}).get("base", {}).get("upside_downside_pct", 0.0) >= -10.0
+                    else "ตลาดกำลังสะท้อนความคาดหวังการเติบโตที่ตึงตัวเกินไป (Stretched Valuation) ควรรอราคาปรับฐานเพื่อเพิ่ม Margin of Safety"
+                )
+            ),
+            "base_fair_value": dcf_result.get("scenarios", {}).get("base", {}).get("target_price"),
+            "margin_of_safety_pct": dcf_result.get("scenarios", {}).get("base", {}).get("upside_downside_pct", 0.0),
         },
         "reverse_dcf": dcf_result,
         "moat_analysis": moat_tags,
