@@ -1139,6 +1139,10 @@ tr.detail-row.open {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             <span>HTML Export</span>
           </button>
+          <button id="btnXrayCopyText" type="button" class="btn-pill-secondary" style="height:36px; padding:0 16px;" title="Copy Markdown Summary to Clipboard">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Copy Text</span>
+          </button>
         </div>
       </div>
     </div>
@@ -2436,8 +2440,103 @@ async function exportXrayHtml() {
   }
 }
 
+function copyXrayTextSummary() {
+  if (!lastXrayPayload) {
+    alert("กรุณากด 'วิเคราะห์ (Analyze)' ก่อนทำการคัดลอกบทวิเคราะห์");
+    return;
+  }
+
+  let txt = "";
+  if (lastXrayPayload.mode === "single_stock") {
+    const d = lastXrayPayload.data || {};
+    const dcf = d.reverse_dcf || {};
+    const sc = dcf.scenarios || {};
+    const fin = d.financials || {};
+    const mult = d.multiples || {};
+    const tam = d.tam_analysis || {};
+    const moats = d.moat_analysis || [];
+    const pm = d.pre_mortem || [];
+
+    txt = `# DEEP THESIS & REVERSE DCF: ${d.name || d.symbol} (${d.symbol})\n`;
+    txt += `Price: $${(d.current_price || 0).toFixed(2)} | Market Cap: $${((d.market_cap || 0)/1e9).toFixed(1)}B | Sector: ${d.sector || 'N/A'}\n\n`;
+    txt += `## 1. Valuation & Reverse DCF Reality Check\n`;
+    txt += `- Market Implied 10-Yr FCF CAGR: ${dcf.implied_fcf_growth_pct !== undefined ? dcf.implied_fcf_growth_pct + '%' : 'N/A'}\n`;
+    txt += `- Reality Check: ${dcf.reality_check || ''}\n`;
+    txt += `- Bear Case: $${(sc.bear?.target_price || 0).toFixed(2)} (${sc.bear?.upside_downside_pct || 0}%) | Growth: ${sc.bear?.assumed_growth_pct || 0}%\n`;
+    txt += `- Base Case (Fair Value): $${(sc.base?.target_price || 0).toFixed(2)} (${sc.base?.upside_downside_pct || 0}%) | Growth: ${sc.base?.assumed_growth_pct || 0}%\n`;
+    txt += `- Bull Case: $${(sc.bull?.target_price || 0).toFixed(2)} (${sc.bull?.upside_downside_pct || 0}%) | Growth: ${sc.bull?.assumed_growth_pct || 0}%\n\n`;
+    txt += `## 2. TAM & Structural Growth\n`;
+    txt += `- TAM Opportunity: $${tam.tam_size_bn || 0}B (${tam.tam_description || ''})\n`;
+    txt += `- Current Penetration: ${tam.penetration_pct || 0}% | Stage: ${tam.s_curve_phase || 'N/A'}\n`;
+    if (tam.catalysts && tam.catalysts.length > 0) {
+      txt += `- Catalysts:\n` + tam.catalysts.map(c => `  * ${c}`).join('\n') + `\n\n`;
+    }
+    txt += `## 3. Financial Quality & Multiples\n`;
+    txt += `- P/E: ${mult.trailing_pe || 'N/A'} (Forward: ${mult.forward_pe || 'N/A'}) | EV/EBITDA: ${mult.ev_to_ebitda || 'N/A'}\n`;
+    txt += `- Margins: Gross ${(fin.gross_margin_pct || 0).toFixed(1)}% | Operating ${(fin.operating_margin_pct || 0).toFixed(1)}% | FCF ${(fin.fcf_margin_pct || 0).toFixed(1)}%\n`;
+    txt += `- Capital Efficiency: ROE ${(fin.roe_pct || 0).toFixed(1)}% | Net Debt/Equity: ${(fin.debt_to_equity || 0).toFixed(2)}\n\n`;
+    txt += `## 4. Moat & Pre-Mortem Risks\n`;
+    txt += `- Competitive Moats:\n` + moats.map(m => `  * ${m}`).join('\n') + `\n`;
+    txt += `- Pre-Mortem (Failure Modes):\n` + pm.map(p => `  * ${p}`).join('\n') + `\n`;
+  } else {
+    const p = lastXrayPayload;
+    const ps = p.risk_return?.portfolio || {};
+    const bs = p.risk_return?.benchmark || {};
+    const conc = p.concentration || {};
+    const lt = p.look_through || {};
+    const ov = p.overlap || {};
+    const rc = p.risk_return?.risk_contribution || [];
+    const reb = p.risk_return?.rebalancing_plan || [];
+
+    txt = `# AI PORTFOLIO X-RAY PRO ANALYSIS\n`;
+    txt += `Portfolio Size: ${(p.risk_return?.portfolio_value || 1000000).toLocaleString()} ${p.risk_return?.currency || 'THB'} | Horizon: ${p.risk_return?.period || '3y'}\n\n`;
+    if (p.equal_weight_warning) txt += `⚠️ Warning: ${p.equal_weight_warning}\n\n`;
+    txt += `## 1. Key Performance & Risk (vs S&P 500)\n`;
+    txt += `- Annualized Return (CAGR): ${(ps.cagr_pct || 0).toFixed(2)}% vs S&P 500: ${(bs.cagr_pct || 0).toFixed(2)}%\n`;
+    txt += `- Annualized Volatility: ${(ps.annualized_volatility_pct || 0).toFixed(2)}%\n`;
+    txt += `- Max Drawdown: ${(ps.max_drawdown_pct || 0).toFixed(2)}% (เงินลดลงจริงสูงสุด: -${(ps.real_cash_loss || 0).toLocaleString()} ${p.risk_return?.currency || 'THB'})\n`;
+    txt += `- Sharpe Ratio: ${(ps.sharpe_ratio || 0).toFixed(2)} | Sortino: ${(ps.sortino_ratio || 0).toFixed(2)} | Calmar: ${(ps.calmar_ratio || 0).toFixed(2)}\n`;
+    txt += `- Concentration: ${conc.effective_positions || 'N/A'} Effective Bets (${conc.verdict || ''})\n\n`;
+    txt += `## 2. Stated Allocation\n`;
+    (p.assets || []).forEach(a => {
+      txt += `- ${a.symbol} (${a.name || a.symbol}): ${a.weight_pct}% | Role: ${a.role || 'CORE'} | TER: ${((a.expense_ratio || 0)*100).toFixed(2)}%\n`;
+    });
+    txt += `\n## 3. Look-Through Top Effective Exposure\n`;
+    (lt.top_holdings || []).slice(0, 10).forEach(h => {
+      txt += `- ${h.symbol} (${h.name || h.symbol}): ${h.effective_pct}% via [${(h.sources || []).join(', ')}]\n`;
+    });
+    txt += `\n## 4. Overlap Redundancy\n`;
+    if (ov.redundant_pairs && ov.redundant_pairs.length > 0) {
+      ov.redundant_pairs.forEach(pair => {
+        txt += `- ${pair.asset_a} ↔ ${pair.asset_b}: ทับซ้อน ${pair.overlap_pct}% (${pair.explanation})\n`;
+      });
+    } else {
+      txt += `- ไม่พบสินทรัพย์ทับซ้อนเกินเกณฑ์ (>25%)\n`;
+    }
+    txt += `\n## 5. Risk Contribution (Variance Attribution)\n`;
+    rc.forEach(r => {
+      txt += `- ${r.symbol}: Weight ${r.weight_pct}% ➔ Risk Contribution ${r.risk_contribution_pct}% (${r.risk_ratio}x ratio) ${r.is_risk_dominator ? '[HIGH VOLATILITY DRIVER]' : ''}\n`;
+    });
+    txt += `\n## 6. Position Sizing & Rebalancing Plan\n`;
+    if (reb.length > 0) {
+      reb.forEach(item => {
+        txt += `- ${item.action} ${item.symbol}: ปรับสัดส่วน ${item.change_pct}% ➔ Target: ${item.target_weight_pct}% (${item.reason})\n`;
+      });
+    } else {
+      txt += `- พอร์ตมีความสมดุลของความเสี่ยงในเกณฑ์ดี ไม่จำเป็นต้อง Rebalance เร่งด่วน\n`;
+    }
+  }
+
+  navigator.clipboard.writeText(txt).then(() => {
+    alert("✓ คัดลอกบทวิเคราะห์แบบ Markdown เรียบร้อยแล้ว สามารถนำไปวางได้ทันที");
+  }).catch(err => {
+    alert("Copy failed: " + err.message);
+  });
+}
+
 document.getElementById("btnXrayRun").addEventListener("click", runXrayAnalysis);
 document.getElementById("btnXrayExport").addEventListener("click", exportXrayHtml);
+document.getElementById("btnXrayCopyText").addEventListener("click", copyXrayTextSummary);
 
 function renderXrayPortfolio(payload) {
   const container = document.getElementById("xrayDynamicContent");
@@ -2587,6 +2686,70 @@ function renderXrayPortfolio(payload) {
     </div>
   `;
 
+  // Risk Contribution (Variance Attribution) & Rebalancing Action Plan
+  const riskContrib = payload.risk_return?.risk_contribution || [];
+  const rebalPlan = payload.risk_return?.rebalancing_plan || [];
+
+  html += `
+    <div class="xray-grid-2">
+      <div class="card-box" style="padding:20px;">
+        <div style="margin-bottom:12px;">
+          <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text);">Risk Contribution (% Variance Attribution)</h3>
+          <p style="font-size:0.75rem; color:var(--muted);">สัดส่วนการสร้างความผันผวนจริง เทียบกับสัดส่วนเงินลงทุน</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Weight</th>
+                <th>Risk Contrib</th>
+                <th>Ratio</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${riskContrib.map(rc => `
+                <tr>
+                  <td><strong style="font-family:var(--font-mono);">${rc.symbol}</strong></td>
+                  <td style="font-family:var(--font-mono);">${(rc.weight_pct || 0).toFixed(1)}%</td>
+                  <td style="font-family:var(--font-mono); font-weight:700; color:${rc.is_risk_dominator ? 'var(--rose)' : 'inherit'};">
+                    ${(rc.risk_contribution_pct || 0).toFixed(1)}%
+                  </td>
+                  <td style="font-family:var(--font-mono);">${(rc.risk_ratio || 1).toFixed(2)}x</td>
+                  <td>
+                    <span class="stat-badge ${rc.is_risk_dominator ? 'red' : 'neutral'}">
+                      ${rc.is_risk_dominator ? '⚠️ High Vol' : 'Balanced'}
+                    </span>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card-box" style="padding:20px;">
+        <div style="margin-bottom:12px;">
+          <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text);">Position Sizing & Rebalancing Action Plan</h3>
+          <p style="font-size:0.75rem; color:var(--muted);">คำแนะนำการปรับสัดส่วนเพื่อรักษาสมดุลความเสี่ยงและคุม Drawdown</p>
+        </div>
+        ${rebalPlan.length > 0 ? rebalPlan.map(rp => `
+          <div class="xray-callout" style="border-left-color:var(--rose); background:var(--rose-light); margin-bottom:10px;">
+            <div style="font-weight:700; font-size:0.85rem; color:var(--rose);">${rp.action} ${rp.symbol}: ลดสัดส่วน ${Math.abs(rp.change_pct).toFixed(1)}% (~${(rp.amount || 0).toLocaleString()} ${currency})</div>
+            <div style="font-size:0.78rem; color:var(--muted); margin-top:3px;">${rp.reason}</div>
+            <div style="font-family:var(--font-mono); font-size:0.78rem; font-weight:700; color:var(--rose); margin-top:4px;">Target Weight: ${rp.target_weight_pct.toFixed(1)}%</div>
+          </div>
+        `).join('') : `
+          <div class="xray-callout" style="border-left-color:var(--emerald); background:var(--emerald-light); color:var(--emerald);">
+            <div style="font-weight:700; font-size:0.85rem;">✓ พอร์ตมีความสมดุลของความเสี่ยงในเกณฑ์ดี</div>
+            <div style="font-size:0.78rem; margin-top:3px;">ไม่มีสินทรัพย์เดี่ยวใดสร้างความผันผวนเกิน 30% ของพอร์ตจนต้องปรับลดเร่งด่วน</div>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+
   // Correlation Matrix
   if (corr.tickers && corr.tickers.length > 1) {
     html += `
@@ -2725,6 +2888,8 @@ function renderXrayThesis(payload) {
   const moats = data.moat_analysis || [];
   const preMortem = data.pre_mortem || [];
   const consensus = data.analyst_consensus || {};
+  const tam = data.tam_analysis || {};
+  const histFin = data.historical_financials || [];
 
   let html = `
     <!-- Stock Header Card -->
@@ -2818,6 +2983,85 @@ function renderXrayThesis(payload) {
         </div>
       </div>
     </div>
+
+    <!-- TAM & S-Curve Lifecycle Card -->
+    <div class="card-box" style="padding:22px;">
+      <div style="margin-bottom:14px;">
+        <h3 style="font-family:var(--font-display); font-size:1.1rem; font-weight:700; color:var(--text);">Total Addressable Market (TAM) & S-Curve Lifecycle</h3>
+        <p style="font-size:0.8rem; color:var(--muted);">${tam.tam_description || ''}</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:14px; margin-bottom:16px;">
+        <div style="background:var(--bg-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">Estimated TAM</div>
+          <div style="font-family:var(--font-mono); font-size:1.5rem; font-weight:800; color:var(--primary); margin:4px 0;">
+            $${(tam.tam_size_bn || 0).toLocaleString()}B
+          </div>
+          <div style="font-size:0.75rem; color:var(--muted);">ขนาดตลาดเป้าหมายโดยประมาณ</div>
+        </div>
+
+        <div style="background:var(--bg-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">Market Penetration</div>
+          <div style="font-family:var(--font-mono); font-size:1.5rem; font-weight:800; color:var(--text); margin:4px 0;">
+            ${(tam.penetration_pct || 0).toFixed(1)}%
+          </div>
+          <div style="font-size:0.75rem; color:var(--muted);">Current Revenue: $${(tam.current_revenue_bn || 0).toFixed(1)}B</div>
+        </div>
+
+        <div style="background:var(--bg-subtle); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border);">
+          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">S-Curve Lifecycle Phase</div>
+          <div style="font-size:0.88rem; font-weight:700; color:var(--primary); margin:6px 0;">
+            ${tam.s_curve_phase || 'N/A'}
+          </div>
+          <div style="font-size:0.75rem; color:var(--muted);">ระยะการเติบโตของอุตสาหกรรม</div>
+        </div>
+      </div>
+
+      ${tam.catalysts && tam.catalysts.length > 0 ? `
+        <div style="font-size:0.8rem; font-weight:700; color:var(--text); margin-bottom:6px;">Key Structural Growth Catalysts:</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          ${tam.catalysts.map(c => `
+            <div style="font-size:0.8rem; color:var(--muted); line-height:1.5;">• ${c}</div>
+          `).join('')}
+        </div>
+      ` : ''}
+    </div>
+
+    <!-- 3-Year Historical Financials Table -->
+    ${histFin.length > 0 ? `
+      <div class="card-box" style="padding:22px;">
+        <div style="margin-bottom:12px;">
+          <h3 style="font-family:var(--font-display); font-size:1.1rem; font-weight:700; color:var(--text);">Historical Financial Trend (Annual Income Statement)</h3>
+          <p style="font-size:0.78rem; color:var(--muted);">แนวโน้มรายได้, อัตรากำไรขั้นต้น, กำไรจากการดำเนินงาน และกำไรสุทธิ</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Period / Fiscal Date</th>
+                <th>Revenue</th>
+                <th>Gross Margin %</th>
+                <th>Operating Income</th>
+                <th>Operating Margin %</th>
+                <th>Net Income</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${histFin.map(hf => `
+                <tr>
+                  <td><strong style="font-family:var(--font-mono);">${hf.date}</strong></td>
+                  <td style="font-family:var(--font-mono);">$${((hf.revenue || 0) / 1e9).toFixed(2)}B</td>
+                  <td style="font-family:var(--font-mono); font-weight:700; color:var(--emerald);">${(hf.gross_margin_pct || 0).toFixed(1)}%</td>
+                  <td style="font-family:var(--font-mono);">$${((hf.operating_income || 0) / 1e9).toFixed(2)}B</td>
+                  <td style="font-family:var(--font-mono); font-weight:700;">${(hf.operating_margin_pct || 0).toFixed(1)}%</td>
+                  <td style="font-family:var(--font-mono);">$${((hf.net_income || 0) / 1e9).toFixed(2)}B</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    ` : ''}
 
     <!-- Moat & Pre-Mortem Row -->
     <div class="xray-grid-2">

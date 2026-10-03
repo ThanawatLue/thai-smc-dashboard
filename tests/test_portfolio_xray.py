@@ -160,3 +160,69 @@ def test_flask_api_xray_endpoints():
     assert "text/html" in r2.headers.get("Content-Type", "")
     assert "<!DOCTYPE html>" in r2.data.decode("utf-8")
 
+
+def test_risk_contribution_and_rebalancing():
+    from src.portfolio_xray.metrics import calculate_risk_return
+
+    tickers = ["VOO", "QQQ", "GLD"]
+    weights = [0.5, 0.3, 0.2]
+
+    res = calculate_risk_return(tickers=tickers, weights=weights, period="1y")
+    assert "risk_contribution" in res
+    assert len(res["risk_contribution"]) == 3
+    # Check sum of risk contribution is approximately 100%
+    total_rc = sum(rc["risk_contribution_pct"] for rc in res["risk_contribution"])
+    assert 99.0 <= total_rc <= 101.0
+    assert "rebalancing_plan" in res
+
+
+def test_tam_and_historical_financials():
+    from src.portfolio_xray.deep_thesis import generate_deep_thesis
+
+    # Call with NVDA (should return TAM and financial trends)
+    res = generate_deep_thesis("NVDA")
+    assert "tam_analysis" in res
+    tam = res["tam_analysis"]
+    assert "tam_size_bn" in tam
+    assert tam["tam_size_bn"] > 0
+    assert "s_curve_phase" in tam
+    assert "historical_financials" in res
+    assert isinstance(res["historical_financials"], list)
+
+
+def test_html_generator_renders_new_sections():
+    from src.portfolio_xray.html_generator import generate_portfolio_html_report, generate_thesis_html_report
+
+    sample_xray = {
+        "summary": "Portfolio X-Ray",
+        "assets": [{"symbol": "VOO", "weight": 0.6, "weight_pct": 60.0}],
+        "look_through": {"top_holdings": []},
+        "overlap": {"redundant_pairs": []},
+        "concentration": {"effective_positions": 1.5, "verdict": "Moderate"},
+        "risk_return": {
+            "portfolio": {"cagr_pct": 12.5, "max_drawdown_pct": -10.2, "sharpe_ratio": 1.1},
+            "benchmark": {"cagr_pct": 10.0},
+            "risk_contribution": [{"symbol": "VOO", "weight_pct": 60.0, "risk_contribution_pct": 60.0, "is_risk_dominator": False}],
+            "rebalancing_plan": [],
+        }
+    }
+    p_html = generate_portfolio_html_report(sample_xray)
+    assert "Risk Contribution & Variance Attribution" in p_html
+    assert "Position Sizing & Rebalancing Action Plan" in p_html
+
+    sample_thesis = {
+        "symbol": "NVDA",
+        "current_price": 120.0,
+        "financials": {"gross_margin_pct": 75.0, "operating_margin_pct": 60.0, "roe_pct": 80.0},
+        "multiples": {"trailing_pe": 45.0, "forward_pe": 35.0},
+        "reverse_dcf": {"implied_fcf_growth_pct": 25.0, "reality_check": "Moderate Growth", "scenarios": {}},
+        "tam_analysis": {"tam_size_bn": 1200.0, "s_curve_phase": "Rapid Growth"},
+        "historical_financials": [{"date": "2024", "revenue": 60e9, "gross_margin_pct": 72.0, "operating_income": 32e9, "operating_margin_pct": 54.0, "net_income": 29e9}],
+        "moat_analysis": ["CUDA Ecosystem"],
+        "pre_mortem": ["Hyperscaler Capex slow down"],
+    }
+    t_html = generate_thesis_html_report(sample_thesis)
+    assert "Total Addressable Market (TAM)" in t_html
+    assert "Historical Financial Trend" in t_html
+
+

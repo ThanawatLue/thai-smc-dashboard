@@ -355,6 +355,61 @@ def generate_portfolio_html_report(xray_data: dict) -> str:
       </div>
     </div>
 
+    <!-- Risk Contribution (Variance Attribution) & Rebalancing Plan Row -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Risk Contribution & Variance Attribution</div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+          สัดส่วนการสร้างความผันผวนจริง (% Risk Contribution = [w_i · (&Sigma;w)_i / &sigma;p&sup2;]) เทียบกับสัดส่วนเงินลงทุน
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Weight %</th>
+              <th>Risk Contrib %</th>
+              <th>Risk / Weight Ratio</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {''.join([f'''
+            <tr>
+              <td><strong style="font-family: var(--font-mono);">{rc['symbol']}</strong></td>
+              <td style="font-family: var(--font-mono);">{rc['weight_pct']:.1f}%</td>
+              <td style="font-family: var(--font-mono); font-weight: 700; color: {'var(--rose-accent)' if rc.get('is_risk_dominator') else 'var(--text-main)'};">{rc['risk_contribution_pct']:.1f}%</td>
+              <td style="font-family: var(--font-mono);">{rc.get('risk_ratio', 1.0):.2f}x</td>
+              <td>
+                <span class="badge" style="background: {'#fee2e2; color: #991b1b' if rc.get('is_risk_dominator') else '#f1f5f9; color: #475569'};">
+                  {'⚠️ High Volatility' if rc.get('is_risk_dominator') else 'Balanced'}
+                </span>
+              </td>
+            </tr>
+            ''' for rc in risk_return.get('risk_contribution', [])])}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Position Sizing & Rebalancing Action Plan</div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+          คำแนะนำการปรับสัดส่วนเพื่อรักษาสมดุลความเสี่ยงและควบคุม Max Drawdown
+        </p>
+        {''.join([f'''
+        <div class="callout" style="border-left-color: var(--rose-accent); margin-bottom: 12px; background: #fff1f2;">
+          <div style="font-weight: 700; color: #9f1239;">{rp['action']} {rp['symbol']}: ลดสัดส่วน {abs(rp['change_pct']):.1f}% (~{rp['amount']:,.0f} {currency})</div>
+          <div style="font-size: 12px; color: #475569; margin-top: 4px;">{rp['reason']}</div>
+          <div style="font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: #9f1239; margin-top: 4px;">Target Weight: {rp['target_weight_pct']:.1f}%</div>
+        </div>
+        ''' for rp in risk_return.get('rebalancing_plan', [])]) if risk_return.get('rebalancing_plan') else '''
+        <div class="callout" style="border-left-color: var(--emerald-accent); background: var(--emerald-light); color: var(--emerald-accent);">
+          <strong>✓ พอร์ตมีความสมดุลของความเสี่ยงในเกณฑ์ดี</strong>
+          <div style="font-size: 12px; margin-top: 4px; color: #065f46;">ไม่มีสินทรัพย์เดี่ยวใดที่มี Risk Contribution เกิน 30% ของพอร์ตจนต้องปรับลดเร่งด่วน</div>
+        </div>
+        '''}
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -467,6 +522,8 @@ def generate_thesis_html_report(thesis_data: dict) -> str:
     scenarios = dcf.get("scenarios", {})
     moats = thesis_data.get("moat_analysis", [])
     pre_mortem = thesis_data.get("pre_mortem", [])
+    tam = thesis_data.get("tam_analysis", {})
+    hist_fin = thesis_data.get("historical_financials", [])
 
     cur_p = thesis_data.get("current_price", 0.0)
     implied_g = dcf.get("implied_fcf_growth_pct", "N/A")
@@ -640,6 +697,70 @@ def generate_thesis_html_report(thesis_data: dict) -> str:
         </div>
       </div>
     </div>
+
+    <!-- TAM & Growth Drivers -->
+    <div class="card">
+      <div class="card-title">Total Addressable Market (TAM) & S-Curve Lifecycle</div>
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 13px; color: var(--text-muted);">Estimated Market Opportunity</div>
+        <div style="font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--indigo-accent); margin: 4px 0;">
+          ${tam.get('tam_size_bn', 0):,.1f} Billion
+        </div>
+        <p style="font-size: 13px; color: #475569;">{tam.get('tam_description', '')}</p>
+      </div>
+
+      <div class="grid-2" style="margin-bottom: 16px;">
+        <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-muted);">Current Market Penetration</div>
+          <div style="font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--text-main); margin: 4px 0;">
+            {tam.get('penetration_pct', 0):.1f}%
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted);">Current Rev: ${tam.get('current_revenue_bn', 0):,.1f}B</div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-muted);">S-Curve Lifecycle Phase</div>
+          <div style="font-family: var(--font-body); font-size: 14px; font-weight: 700; color: var(--indigo-accent); margin: 6px 0;">
+            {tam.get('s_curve_phase', 'N/A')}
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted);">Stage of market penetration & acceleration</div>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">Key Structural Growth Catalysts:</div>
+      {''.join([f'<div style="font-size: 13px; color: #475569; margin-bottom: 6px;">• {c}</div>' for c in tam.get('catalysts', [])])}
+    </div>
+
+    <!-- 3-Year Historical Financials Table -->
+    {f'''
+    <div class="card">
+      <div class="card-title">Historical Financial Trend (Annual Income Statement)</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Period / Fiscal Date</th>
+            <th>Revenue</th>
+            <th>Gross Margin %</th>
+            <th>Operating Income</th>
+            <th>Operating Margin %</th>
+            <th>Net Income</th>
+          </tr>
+        </thead>
+        <tbody>
+          {''.join([f"""
+          <tr>
+            <td><strong style="font-family: var(--font-mono);">{hf['date']}</strong></td>
+            <td style="font-family: var(--font-mono);">${hf['revenue']/1e9:,.2f}B</td>
+            <td style="font-family: var(--font-mono); font-weight: 600; color: var(--emerald-accent);">{hf['gross_margin_pct']:.1f}%</td>
+            <td style="font-family: var(--font-mono);">${hf['operating_income']/1e9:,.2f}B</td>
+            <td style="font-family: var(--font-mono); font-weight: 600;">{hf['operating_margin_pct']:.1f}%</td>
+            <td style="font-family: var(--font-mono);">${hf['net_income']/1e9:,.2f}B</td>
+          </tr>
+          """ for hf in hist_fin])}
+        </tbody>
+      </table>
+    </div>
+    ''' if hist_fin else ''}
 
     <!-- Moat & Pre-Mortem -->
     <div class="card">

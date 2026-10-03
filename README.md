@@ -18,13 +18,16 @@ Standalone dashboard for Thai-market Smart Money Concept research.
 - Sends candidates from those buckets into the SMC analyzer.
 - Shows each candidate's source bucket before SMC scoring.
 - Keeps `RR >= 1:2` as the trade-quality filter.
-- **AI Portfolio X-Ray Pro:**
+- **AI Portfolio X-Ray Pro & Deep Thesis:**
   - Decomposes ETF holdings (Look-Through exposure) to reveal hidden Big Tech concentration.
   - Overlap Matrix $\sum \min(w_A, w_B)$ alerting on redundancies (>25% overlap).
   - Translates Maximum Drawdown into real currency values (e.g. -119,559 THB on 1M THB portfolio).
   - Cross-Asset Weekly Correlation Matrix aligning 24/7 Crypto (BTC) with 5D US Equities.
+  - Variance Attribution / Risk Contribution (%RC) identifying volatility drivers.
+  - Position Sizing & Rebalancing Action Plan with actionable cash/weight adjustments.
   - Deep Thesis Mode for single assets with Reverse DCF 10-Yr FCF CAGR solver and Bull/Base/Bear scenarios.
-  - Standalone single-file HTML report export.
+  - TAM & S-Curve Lifecycle Analysis and 3-Year Historical Financial Statement Trends.
+  - Standalone single-file HTML report export and one-click structured Markdown copy.
 
 ## Run
 

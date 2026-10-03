@@ -359,6 +359,41 @@ def calculate_risk_return(
     corr_df = returns_df[corr_subset].corr()
     corr_matrix = corr_df.round(3).values.tolist()
 
+    # Risk Contribution calculation (Variance Attribution)
+    # RC_i = w_i * (Sigma * w)_i / sigma_p^2
+    cov_matrix = returns_df[avail_tickers].cov().values
+    port_var = float(norm_w @ cov_matrix @ norm_w)
+    risk_contributions = []
+    if port_var > 0:
+        rc_array = (norm_w * (cov_matrix @ norm_w)) / port_var
+        for i, sym in enumerate(avail_tickers):
+            rc_pct = round(float(rc_array[i]) * 100, 2)
+            w_pct = round(float(norm_w[i]) * 100, 2)
+            risk_ratio = round(rc_pct / max(w_pct, 0.01), 2)
+            risk_contributions.append({
+                "symbol": sym,
+                "weight_pct": w_pct,
+                "risk_contribution_pct": rc_pct,
+                "risk_ratio": risk_ratio,
+                "is_risk_dominator": rc_pct > (2.0 * w_pct) and rc_pct > 20.0,
+            })
+    risk_contributions = sorted(risk_contributions, key=lambda x: x["risk_contribution_pct"], reverse=True)
+
+    # Position Sizing & Rebalancing Action Recommendations
+    rebalancing_plan = []
+    for rc in risk_contributions:
+        if rc["risk_contribution_pct"] > 30.0 and rc["weight_pct"] >= 8.0:
+            trim_pct = round(min(5.0, rc["weight_pct"] * 0.25), 1)
+            trim_val = round(portfolio_value * (trim_pct / 100.0), 0)
+            rebalancing_plan.append({
+                "action": "TRIM",
+                "symbol": rc["symbol"],
+                "target_weight_pct": round(rc["weight_pct"] - trim_pct, 1),
+                "change_pct": -trim_pct,
+                "amount": trim_val,
+                "reason": f"สร้างความผันผวนสูงถึง {rc['risk_contribution_pct']}% ของพอร์ต ควรทยอยขายลดน้ำหนัก {trim_pct}% ({trim_val:,.0f} {currency}) เพื่อคุม Drawdown",
+            })
+
     return {
         "period": period,
         "sample_weeks": len(returns_df),
@@ -373,4 +408,7 @@ def calculate_risk_return(
             "tickers": corr_subset,
             "matrix": corr_matrix,
         },
+        "risk_contribution": risk_contributions,
+        "rebalancing_plan": rebalancing_plan,
     }
+

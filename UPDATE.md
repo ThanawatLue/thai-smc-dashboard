@@ -55,14 +55,19 @@
      - **Holding Overlap Matrix:** คำนวณค่าสัมประสิทธิ์การทับซ้อน $\sum \min(w_A, w_B)$ ระหว่างสินทรัพย์ทุกคู่ พร้อมแจ้งเตือนคู่ที่มีความซ้ำซ้อนสูง (>25%) ในภาษาไทยที่เข้าใจง่าย
      - **Max Drawdown ในรูปเงินจริง (Real Currency Loss):** แปลงการลดลงสูงสุดจากจุดพีคออกมาเป็นจำนวนเงินบาทหรือดอลลาร์จริงตามขนาดพอร์ต เช่น พอร์ต 1,000,000 บาท ลดลงสูงสุด -11.96% คิดเป็นเงินลดลง -119,559.95 บาท พร้อมคำนวณระยะเวลาฟื้นตัว (Recovery Time)
      - **Cross-Asset Weekly Correlation Matrix:** ประมวลผลสหสัมพันธ์ผลตอบแทนรวม (Total Return) โดย Resample เป็นรายสัปดาห์ (Friday Close) เพื่อให้สินทรัพย์ที่เทรด 24/7 เช่น Crypto (BTC) ทำงานร่วมกับตลาดหุ้นอเมริกาและพันธบัตรได้อย่างแม่นยำ
+     - **Variance Attribution / Risk Contribution (%RC):** แยกองค์ประกอบความเสี่ยงจริงของแต่ละสินทรัพย์ผ่าน Covariance Matrix ($\%RC_i = \frac{w_i (\Sigma w)_i}{\sigma_p^2} \times 100\%$) เพื่อดูว่าสินทรัพย์ไหนเป็นตัวสร้างความผันผวนหลัก (Risk Dominator)
+     - **Position Sizing & Rebalancing Action Plan:** ให้คำแนะนำปรับสัดส่วนเพื่อควบคุม Drawdown โดยคำนวณเป็นเปอร์เซ็นต์และเม็ดเงินจริงที่ควร TRIM หรือ Rebalance
      - **Concentration Analysis (HHI):** คำนวณ Herfindahl-Hirschman Index และจำนวนการเดิมพันอิสระ ($N_{\text{eff}} = 1/HHI$)
      - **CAGR, Annualized Volatility, Sharpe, Sortino, Calmar:** เปรียบเทียบเคียงข้างกับ S&P 500 (VOO Total Return)
    - **Deep Thesis & Reverse DCF Mode (เมื่อใส่หุ้นเดี่ยว 1 ตัว เช่น NVDA, RKLB):**
      - **Reverse DCF Implied Growth Solver:** ใช้ Bisection Algorithm คำนวณหาอัตราการเติบโตของ Free Cash Flow (FCF CAGR) เฉลี่ย 10 ปี ที่ตลาดกำลังสะท้อนอยู่ในราคาปัจจุบัน
      - **Reality Check & Scenarios:** ประเมินความสมเหตุสมผลของความคาดหวังตลาด และคำนวณราคาเหมาะสม 3 รูปแบบ (Bear / Base / Bull) พร้อม Margin of Safety
+     - **Total Addressable Market (TAM) & S-Curve Analysis:** ประเมินขนาดโอกาสทางการตลาด ($B), Current Penetration %, S-Curve Lifecycle Stage, และ Key Structural Growth Catalysts
+     - **3-Year Historical Financials Trend:** แสดงตารางย้อนหลังของรายได้ (Revenue), Gross Margin %, Operating Income, Operating Margin % และ Net Income
      - **Competitive Moat Analysis & Pre-Mortem:** วิเคราะห์คูเมืองธุรกิจ (Pricing power, High ROIC, Switching costs) และระบุข้อผิดพลาดที่จะทำให้ Thesis ล้มเหลว
-   - **Standalone HTML Dashboard Export:**
-     - ปุ่ม Export สร้างรายงาน HTML แบบ Single File ที่สมบูรณ์ในตัวเอง มีกราฟ ECharts/Chart.js ฝังพร้อมเปิดดูหรือแชร์ได้โดยไม่ต้องพึ่ง Server
+   - **Standalone HTML Dashboard Export & One-Click Markdown Copy:**
+     - ปุ่ม **HTML Export:** สร้างรายงาน HTML แบบ Single File ที่สมบูรณ์ในตัวเอง มีกราฟ ECharts/Chart.js ฝังพร้อมเปิดดูหรือแชร์ได้โดยไม่ต้องพึ่ง Server
+     - ปุ่ม **Copy Text:** คัดลอกบทวิเคราะห์ทั้งหมดในรูปแบบ Structured Markdown ลง Clipboard ได้ทันทีเพียงคลิกเดียว นำไปแชร์หรือส่งต่อให้ AI วิเคราะห์ต่อได้อย่างสะดวก
    - **API Routes:**
      - `POST /api/xray/analyze` (JSON analysis)
      - `POST /api/xray/export-html` (Downloadable HTML report)

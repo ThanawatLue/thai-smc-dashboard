@@ -110,6 +110,73 @@ def generate_deep_thesis(symbol: str) -> dict:
         f"3. Macro & Beta Sensitivity: หุ้นมีค่า Beta เท่ากับ {round(beta, 2)} จึงมีความอ่อนไหวต่อภาวะสภาพคล่องและทิศทางอัตราดอกเบี้ย",
     ]
 
+    # 3-Year Historical Financials
+    hist_financials = []
+    try:
+        fin_df = ticker.financials
+        if fin_df is not None and not fin_df.empty:
+            years = sorted([c for c in fin_df.columns if hasattr(c, 'strftime')])[-3:]
+            for y_ts in years:
+                y_str = str(y_ts)[:10]
+                rev_val = float(fin_df.loc["Total Revenue", y_ts]) if "Total Revenue" in fin_df.index and str(fin_df.loc["Total Revenue", y_ts]) != 'nan' else 0.0
+                gp_val = float(fin_df.loc["Gross Profit", y_ts]) if "Gross Profit" in fin_df.index and str(fin_df.loc["Gross Profit", y_ts]) != 'nan' else 0.0
+                op_val = float(fin_df.loc["Operating Income", y_ts]) if "Operating Income" in fin_df.index and str(fin_df.loc["Operating Income", y_ts]) != 'nan' else 0.0
+                ni_val = float(fin_df.loc["Net Income Common Stockholders", y_ts]) if "Net Income Common Stockholders" in fin_df.index and str(fin_df.loc["Net Income Common Stockholders", y_ts]) != 'nan' else (float(fin_df.loc["Net Income", y_ts]) if "Net Income" in fin_df.index and str(fin_df.loc["Net Income", y_ts]) != 'nan' else 0.0)
+
+                hist_financials.append({
+                    "date": y_str,
+                    "revenue": rev_val,
+                    "gross_profit": gp_val,
+                    "gross_margin_pct": round((gp_val / rev_val) * 100, 1) if rev_val > 0 else 0.0,
+                    "operating_income": op_val,
+                    "operating_margin_pct": round((op_val / rev_val) * 100, 1) if rev_val > 0 else 0.0,
+                    "net_income": ni_val,
+                })
+    except Exception as e:
+        logger.debug(f"Historical financials fetch failed: {e}")
+
+    # TAM & Growth Driver Estimation
+    sector_str = info.get("sector", "")
+    ind_str = info.get("industry", "")
+    if "Semiconductor" in ind_str or "Hardware" in ind_str:
+        tam_size_bn = 1200.0  # $1.2T
+        tam_description = "AI Accelerators, Data Center Compute & Edge Silicon (Expected $1.2T by 2030)"
+        s_curve_phase = "Rapid Growth / Scaling Phase (Enterprise AI Adoption)"
+        catalysts = [
+            "Data Center Capex expansion from Hyperscalers (Microsoft, Meta, Google, Amazon)",
+            "Generative AI inference scaling across edge devices and sovereign AI",
+            "Next-gen packaging & architecture transitions (e.g. Blackwell, Rubin)"
+        ]
+    elif "Software" in ind_str or "Cloud" in ind_str:
+        tam_size_bn = 850.0
+        tam_description = "Enterprise Cloud Software, Cybersecurity & AI Automation"
+        s_curve_phase = "Mid-to-Late Expansion Phase"
+        catalysts = [
+            "AI Copilot and agentic workflow monetization",
+            "Consolidation of multi-point SaaS into unified platforms",
+            "Expansion into regulated industries (Healthcare, Government, Finance)"
+        ]
+    elif "Aerospace" in ind_str or "Space" in ind_str:
+        tam_size_bn = 1500.0
+        tam_description = "Global Space Economy, Satellite Launch & Constellation Services (Expected $1.5T+ by 2035)"
+        s_curve_phase = "Early-to-Mid Commercialization S-Curve"
+        catalysts = [
+            "Launch cadence acceleration and medium-lift rocket deployment",
+            "Defense and national security constellation contracts (SDA, USSF)",
+            "Direct-to-device cellular satellite connectivity"
+        ]
+    else:
+        tam_size_bn = max(100.0, (market_cap / 1e9) * 5.0)
+        tam_description = f"Global {ind_str or sector_str} Market Opportunity"
+        s_curve_phase = "Mature Growth / Cash Generation Phase"
+        catalysts = [
+            "Market share expansion through technological differentiation",
+            "Operating leverage and margin expansion",
+            "Share buybacks and capital return programs"
+        ]
+
+    penetration_pct = round(((total_revenue / 1e9) / max(tam_size_bn, 1.0)) * 100, 1)
+
     return {
         "symbol": clean_sym,
         "name": info.get("longName") or info.get("shortName") or clean_sym,
@@ -136,6 +203,15 @@ def generate_deep_thesis(symbol: str) -> dict:
             "net_debt": net_debt,
             "current_ratio": round(current_ratio, 2),
             "debt_to_equity": round(debt_to_equity, 2),
+        },
+        "historical_financials": hist_financials,
+        "tam_analysis": {
+            "tam_size_bn": tam_size_bn,
+            "tam_description": tam_description,
+            "current_revenue_bn": round(total_revenue / 1e9, 2),
+            "penetration_pct": penetration_pct,
+            "s_curve_phase": s_curve_phase,
+            "catalysts": catalysts,
         },
         "multiples": {
             "trailing_pe": round(float(trailing_pe), 2) if trailing_pe else "N/A",
