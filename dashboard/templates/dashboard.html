@@ -798,6 +798,295 @@ tr.detail-row.open {
   border-radius: var(--radius-full);
 }
 
+/* Plain-Thai Action Plan Styling */
+.action-plan-card {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.04));
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.action-plan-card.armed {
+  border-color: var(--emerald-border);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.03));
+}
+.action-plan-card.wait {
+  border-color: var(--primary-border);
+}
+.action-plan-card.notrade {
+  border-color: var(--border);
+  background: var(--surface);
+}
+.action-plan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.action-plan-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.btn-copy-plan {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition);
+}
+.btn-copy-plan:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+.action-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.action-plan-col {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+.action-plan-col-label {
+  font-size: 0.74rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.action-plan-col-val {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+.action-plan-summary {
+  background: var(--surface);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 10px 14px;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Position Sizing Calculator */
+.calc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.calc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: center;
+}
+@media (max-width: 860px) {
+  .calc-grid { grid-template-columns: 1fr; }
+}
+.calc-inputs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.calc-input-group {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.calc-input-group label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.calc-input-group input, .calc-input-group select {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-subtle);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: border-color var(--transition);
+}
+.calc-input-group input:focus, .calc-input-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.calc-results {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+}
+.calc-res-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.calc-res-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.calc-res-val {
+  font-family: var(--font-mono);
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+/* Quick Filter Chips */
+.filter-chips-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+.filter-chip {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition);
+  user-select: none;
+}
+.filter-chip:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+  border-color: var(--muted-light);
+}
+.filter-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+/* Interactive Tooltips */
+.tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+}
+.tooltip-icon {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-left: 4px;
+  opacity: 0.8;
+  transition: all var(--transition);
+}
+.tooltip-wrap:hover .tooltip-icon {
+  opacity: 1;
+  color: var(--primary);
+  transform: scale(1.15);
+}
+.tooltip-bubble {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: var(--surface-card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.45;
+  white-space: normal;
+  width: max-content;
+  max-width: 250px;
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  transition: all 0.15s ease-out;
+  pointer-events: none;
+  text-align: left;
+}
+.tooltip-wrap:hover .tooltip-bubble {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Toast Notification */
+#toastNotification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--emerald);
+  box-shadow: var(--shadow-lg);
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 9999;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+#toastNotification.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
 /* ECharts Container */
 .chart-wrap {
   height: 580px;
@@ -1038,8 +1327,17 @@ tr.detail-row.open {
           <p>Click any row to view candlestick chart, zones, and trade parameters</p>
         </div>
 
+        <!-- Quick Filter Chips -->
+        <div class="filter-chips-wrap" id="quickFilterChips" style="width: 100%; margin-top: 4px; border-top: 1px solid var(--border-subtle); padding-top: 10px;">
+          <button type="button" class="filter-chip active" data-filter="all">ทั้งหมด (All)</button>
+          <button type="button" class="filter-chip" data-filter="armed">🔥 Armed Setups</button>
+          <button type="button" class="filter-chip" data-filter="high_rr">🎯 R:R &ge; 2.5</button>
+          <button type="button" class="filter-chip" data-filter="bullish">🟢 Bullish Bias</button>
+          <button type="button" class="filter-chip" data-filter="near_entry">⚡ ใกล้จุดเข้า (&le; 2%)</button>
+        </div>
+
         <!-- Filters Bar -->
-        <div class="filters-bar">
+        <div class="filters-bar" style="margin-top: 6px;">
           <div class="search-input-wrap">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input type="text" id="searchSym" placeholder="Search ticker...">
@@ -1074,12 +1372,47 @@ tr.detail-row.open {
             <tr>
               <th data-sort="symbol">Symbol<span class="sort-icon"></span></th>
               <th data-sort="sources">Source<span class="sort-icon"></span></th>
-              <th data-sort="decision">Decision<span class="sort-icon"></span></th>
+              <th data-sort="decision">
+                <span class="tooltip-wrap">
+                  <span>Decision</span>
+                  <span class="tooltip-icon">ℹ️</span>
+                  <span class="tooltip-bubble">สถานะประเมิน: ARMED (พร้อมเปิดคำสั่ง), WAIT (รอราคาย่อเข้าโซน), NO TRADE (ความคุ้มค่ายังไม่พอ)</span>
+                </span>
+                <span class="sort-icon"></span>
+              </th>
               <th data-sort="side">Side<span class="sort-icon"></span></th>
-              <th data-sort="score">Score<span class="sort-icon">▼</span></th>
-              <th data-sort="rr">RR<span class="sort-icon"></span></th>
-              <th data-sort="structure.event">Structure<span class="sort-icon"></span></th>
-              <th data-sort="liquidity.side">Liquidity<span class="sort-icon"></span></th>
+              <th data-sort="score">
+                <span class="tooltip-wrap">
+                  <span>Score</span>
+                  <span class="tooltip-icon">ℹ️</span>
+                  <span class="tooltip-bubble">คะแนนคุณภาพ Setup (เต็ม 100) ประเมินจากความสมบูรณ์ของโครงสร้าง SMC, วอลุ่ม, และโซนทดสอบ</span>
+                </span>
+                <span class="sort-icon">▼</span>
+              </th>
+              <th data-sort="rr">
+                <span class="tooltip-wrap">
+                  <span>RR</span>
+                  <span class="tooltip-icon">ℹ️</span>
+                  <span class="tooltip-bubble">Risk : Reward Ratio สัดส่วนกำไรคาดหวังเทียบกับความเสี่ยงขาดทุน (ระบบคัดเลือกขั้นต่ำ &ge; 1:2.0)</span>
+                </span>
+                <span class="sort-icon"></span>
+              </th>
+              <th data-sort="structure.event">
+                <span class="tooltip-wrap">
+                  <span>Structure</span>
+                  <span class="tooltip-icon">ℹ️</span>
+                  <span class="tooltip-bubble">โครงสร้างราคา: BOS (ทะลุไฮ/โลว์เดิมตามเทรนด์) หรือ CHoCH (สัญญาณเตือนการเริ่มกลับตัวของเทรนด์)</span>
+                </span>
+                <span class="sort-icon"></span>
+              </th>
+              <th data-sort="liquidity.side">
+                <span class="tooltip-wrap">
+                  <span>Liquidity</span>
+                  <span class="tooltip-icon">ℹ️</span>
+                  <span class="tooltip-bubble">Liquidity Sweep: การที่ราคากวาด Stop Loss รายย่อยก่อนที่จะกลับตัวจริงตามทิศทางสถาบัน</span>
+                </span>
+                <span class="sort-icon"></span>
+              </th>
             </tr>
           </thead>
           <tbody id="rows"></tbody>
@@ -1261,10 +1594,261 @@ function getVal(obj, path) {
   return path.split('.').reduce((acc, part) => acc && acc[part], obj);
 }
 
+let currentQuickFilter = "all";
+
+function generateActionPlanHtml(item) {
+  const curr = currentMarket === "TH" ? "฿" : "$";
+  const isArmed = item.decision === "ARMED";
+  const isWait = item.decision === "WAIT";
+  
+  let statusBadge = "";
+  let statusAdvice = "";
+  let statusClass = isArmed ? "armed" : (isWait ? "wait" : "notrade");
+
+  if (isArmed) {
+    statusBadge = `<span class="badge-pill armed">🔥 พร้อมเข้าเทรด (Armed Setup)</span>`;
+    statusAdvice = `ราคาเข้าสู่โซนความได้เปรียบทางสถิติของ SMC เรียบร้อยแล้ว สัดส่วน R:R ผ่านเกณฑ์ขั้นต่ำ สามารถพิจารณารอแท่งเทียนยืนยัน (Confirmation) ในกรอบ M15/H1 หรือวางแผนตั้ง Limit Order ตามกรอบที่กำหนด`;
+  } else if (isWait) {
+    statusBadge = `<span class="badge-pill wait">👀 เฝ้าติดตาม (Wait for Pullback)</span>`;
+    statusAdvice = `โครงสร้างราคาเริ่มมีสัญญาณกลับตัวหรือรักษาแนวโน้มได้ดี แต่ราคายังไม่อยู่ในจุดเข้าซื้อที่ได้เปรียบ (ยังไม่ย่อถึงแนว Order Block/FVG) แนะนำให้รอราคาดึงกลับ ไม่ควรไล่ราคา`;
+  } else {
+    statusBadge = `<span class="badge-pill no-trade">⏸️ ยังไม่เข้าเงื่อนไข (No Trade)</span>`;
+    statusAdvice = `สัดส่วนกำไรต่อความเสี่ยง (R:R) ยังต่ำกว่าเกณฑ์ หรือโครงสร้างราคายังไม่ยืนยันชัดเจน แนะนำให้ชะลอการเทรดและรอจังหวะการสร้างโครงสร้างรอบใหม่`;
+  }
+
+  const zoneHint = item.zones?.demand?.low ? `แนวรับ Demand (${fmt(item.zones.demand.low)} - ${fmt(item.zones.demand.high)})` : (item.zones?.fvg?.low ? `ช่องว่างราคา FVG (${fmt(item.zones.fvg.low)} - ${fmt(item.zones.fvg.high)})` : 'แนวโครงสร้างหลัก');
+
+  return `
+    <div class="action-plan-card ${statusClass}">
+      <div class="action-plan-header">
+        <div class="action-plan-title">
+          <span>📋</span>
+          <span>สรุปแผนเทรดฉบับเข้าใจง่าย (Plain-Thai Action Plan)</span>
+          ${statusBadge}
+        </div>
+        <button type="button" class="btn-copy-plan" onclick="copyTradePlan('${item.symbol}')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          คัดลอกแผนเทรด (Copy Plan)
+        </button>
+      </div>
+      
+      <div class="action-plan-grid">
+        <div class="action-plan-col">
+          <div class="action-plan-col-label">
+            <span>🎯 จุดเข้าซื้อ (Entry)</span>
+          </div>
+          <div class="action-plan-col-val" style="color:var(--primary);">
+            ${curr}${fmt(item.entry)}
+          </div>
+          <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">อิง ${zoneHint}</div>
+        </div>
+
+        <div class="action-plan-col">
+          <div class="action-plan-col-label">
+            <span>🛑 จุดยอมแพ้ (Stop Loss)</span>
+          </div>
+          <div class="action-plan-col-val" style="color:var(--rose);">
+            ${curr}${fmt(item.stop)} <span style="font-size:0.75em; font-weight:normal;">(-${fmt(item.pct_loss)}%)</span>
+          </div>
+          <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">หลุดแนวนี้แปลว่าโครงสร้างเสีย</div>
+        </div>
+
+        <div class="action-plan-col">
+          <div class="action-plan-col-label">
+            <span>🏆 เป้าทำกำไร (Take Profit)</span>
+          </div>
+          <div class="action-plan-col-val" style="color:var(--emerald);">
+            ${curr}${fmt(item.target)} <span style="font-size:0.75em; font-weight:normal;">(+${fmt(item.pct_gain)}%)</span>
+          </div>
+          <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">โซนสภาพคล่อง/ต้านหลัก</div>
+        </div>
+
+        <div class="action-plan-col">
+          <div class="action-plan-col-label">
+            <span>⚖️ ความคุ้มค่า (Risk : Reward)</span>
+          </div>
+          <div class="action-plan-col-val" style="color:${item.rr >= 2.5 ? 'var(--emerald)' : 'var(--amber)'};">
+            1 : ${fmt(item.rr)} เท่า
+          </div>
+          <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">เสี่ยง 1 ส่วน ลุ้นได้ ${fmt(item.rr)} ส่วน</div>
+        </div>
+      </div>
+
+      <div class="action-plan-summary">
+        💡 <b>คำแนะนำกลยุทธ์:</b> ${statusAdvice}
+      </div>
+    </div>
+  `;
+}
+
+function generateCalculatorHtml(item) {
+  const symClean = item.symbol.replace('.', '_');
+  const isTh = currentMarket === "TH";
+  const defCap = isTh ? "100000" : "10000";
+  const curr = isTh ? "฿" : "$";
+  const unit = currentMarket === "GOLD" ? "oz" : "หุ้น";
+
+  return `
+    <div class="calc-card">
+      <div class="calc-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span>🧮</span>
+          <span>เครื่องคำนวณขนาดไม้ & คุมความเสี่ยง (Position Sizing & Risk Calculator)</span>
+        </div>
+        <span style="font-size:0.75rem; color:var(--muted); font-weight:normal;">คำนวณอัตโนมัติตามจุด Stop Loss จริง</span>
+      </div>
+
+      <div class="calc-grid">
+        <div class="calc-inputs">
+          <div class="calc-input-group">
+            <label for="calc-cap-${symClean}">เงินทุนพอร์ต (${curr}):</label>
+            <input type="number" id="calc-cap-${symClean}" value="${defCap}" step="${isTh ? '10000' : '1000'}">
+          </div>
+          <div class="calc-input-group">
+            <label for="calc-risk-${symClean}">ความเสี่ยงที่ยอมรับได้ (% Risk):</label>
+            <select id="calc-risk-${symClean}">
+              <option value="1">1% (ระมัดระวังสูงสุด)</option>
+              <option value="2" selected>2% (มาตรฐานนักเทรด)</option>
+              <option value="3">3% (เชิงรุก / Growth)</option>
+              <option value="5">5% (ความเสี่ยงสูง)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calc-results">
+          <div class="calc-res-item">
+            <span class="calc-res-label">จำนวนที่ควรซื้อ (Position Size):</span>
+            <span class="calc-res-val" id="calc-shares-${symClean}" style="color:var(--primary);">0 ${unit}</span>
+          </div>
+          <div class="calc-res-item">
+            <span class="calc-res-label">เงินทุนที่ต้องใช้ (Order Value):</span>
+            <span class="calc-res-val" id="calc-cost-${symClean}">0 ${curr}</span>
+          </div>
+          <div class="calc-res-item">
+            <span class="calc-res-label">ความเสี่ยงขาดทุนสูงสุด (Max Loss):</span>
+            <span class="calc-res-val" id="calc-loss-${symClean}" style="color:var(--rose);">-0 ${curr}</span>
+          </div>
+          <div class="calc-res-item">
+            <span class="calc-res-label">กำไรคาดหวังหากถึง TP (Reward):</span>
+            <span class="calc-res-val" id="calc-profit-${symClean}" style="color:var(--emerald);">+0 ${curr}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updateCalc(symClean, entry, stop, target, market) {
+  const capInput = document.getElementById(`calc-cap-${symClean}`);
+  const riskSelect = document.getElementById(`calc-risk-${symClean}`);
+  if (!capInput || !riskSelect) return;
+  
+  const capital = parseFloat(capInput.value) || 0;
+  const riskPct = parseFloat(riskSelect.value) || 2;
+  const curr = market === "TH" ? "฿" : "$";
+  const unit = market === "GOLD" ? "oz" : "หุ้น";
+  
+  const riskAmount = capital * (riskPct / 100);
+  const stopDist = Math.abs(entry - stop);
+  
+  let shares = 0;
+  if (stopDist > 0 && entry > 0) {
+    shares = Math.floor(riskAmount / stopDist);
+  }
+  
+  const totalCost = shares * entry;
+  const maxLoss = shares * stopDist;
+  const potProfit = shares * Math.abs(target - entry);
+  
+  const sharesEl = document.getElementById(`calc-shares-${symClean}`);
+  const costEl = document.getElementById(`calc-cost-${symClean}`);
+  const lossEl = document.getElementById(`calc-loss-${symClean}`);
+  const profitEl = document.getElementById(`calc-profit-${symClean}`);
+  
+  if (sharesEl) sharesEl.textContent = `${shares.toLocaleString()} ${unit}`;
+  if (costEl) costEl.textContent = `${curr}${totalCost.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+  if (lossEl) lossEl.textContent = `-${curr}${maxLoss.toLocaleString(undefined, {maximumFractionDigits: 0})} (${riskPct}%)`;
+  if (profitEl) profitEl.textContent = `+${curr}${potProfit.toLocaleString(undefined, {maximumFractionDigits: 0})}`;
+}
+
+function attachCalcListeners(item) {
+  const symClean = item.symbol.replace('.', '_');
+  const capInput = document.getElementById(`calc-cap-${symClean}`);
+  const riskSelect = document.getElementById(`calc-risk-${symClean}`);
+  if (!capInput || !riskSelect) return;
+
+  const onUpdate = () => {
+    updateCalc(symClean, Number(item.entry), Number(item.stop), Number(item.target), currentMarket);
+  };
+
+  capInput.addEventListener("input", onUpdate);
+  riskSelect.addEventListener("change", onUpdate);
+  onUpdate();
+}
+
+function copyTradePlan(symbol) {
+  const item = latest.find(i => i.symbol === symbol);
+  if (!item) return;
+  const curr = currentMarket === "TH" ? "฿" : "$";
+  const biasTh = item.structure?.bias === "bullish" ? "ขาขึ้น (Bullish)" : (item.structure?.bias === "bearish" ? "ขาลง (Bearish)" : "ไซด์เวย์ (Neutral)");
+  const decisionTh = item.decision === "ARMED" ? "🔥 พร้อมเข้าเทรด (Armed Setup)" : (item.decision === "WAIT" ? "👀 เฝ้าติดตาม (Wait for Pullback)" : "⏸️ ยังไม่เข้าเงื่อนไข (No Trade)");
+  
+  const text = `📊 แผนเทรด SMC: ${item.symbol} (${item.sector || currentMarket})
+━━━━━━━━━━━━━━━━━━
+📌 สถานะ: ${decisionTh}
+🧭 โครงสร้างราคา: ${biasTh} (Event: ${item.structure?.event || 'N/A'})
+🎯 จุดเข้าซื้อ (Entry): ${curr}${fmt(item.entry)}
+🛑 จุดตัดขาดทุน (SL): ${curr}${fmt(item.stop)} (-${fmt(item.pct_loss)}%)
+🏆 เป้าทำกำไร (TP): ${curr}${fmt(item.target)} (+${fmt(item.pct_gain)}%)
+⚖️ อัตราส่วนความคุ้มค่า (R:R): 1 : ${fmt(item.rr)}
+💡 โซนสำคัญ: Demand ${zoneText(item.zones?.demand)} | FVG ${zoneText(item.zones?.fvg)}
+━━━━━━━━━━━━━━━━━━
+สร้างโดย Thai SMC Dashboard • https://thai-smc-dashboard.onrender.com/`;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast(`✅ คัดลอกแผนเทรด ${item.symbol} เรียบร้อยแล้ว!`);
+    }).catch(() => {
+      prompt("คัดลอกข้อความแผนเทรดด้านล่างนี้ได้เลยครับ:", text);
+    });
+  } else {
+    prompt("คัดลอกข้อความแผนเทรดด้านล่างนี้ได้เลยครับ:", text);
+  }
+}
+
+function showToast(msg) {
+  let toast = document.getElementById("toastNotification");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "toastNotification";
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<span>${msg}</span>`;
+  toast.classList.add("show");
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2800);
+}
+
 function renderRows() {
   let data = [...latest];
   
-  // Filters
+  // Quick Filter Chips
+  if (currentQuickFilter === "armed") {
+    data = data.filter(d => d.decision === "ARMED");
+  } else if (currentQuickFilter === "high_rr") {
+    data = data.filter(d => (parseFloat(d.rr) || 0) >= 2.5);
+  } else if (currentQuickFilter === "bullish") {
+    data = data.filter(d => (d.structure && d.structure.bias === "bullish") || d.side === "buy");
+  } else if (currentQuickFilter === "near_entry") {
+    data = data.filter(d => {
+      if (!d.price || !d.entry) return false;
+      const diffPct = Math.abs(d.price - d.entry) / d.price * 100;
+      return diffPct <= 2.5;
+    });
+  }
+
+  // Text and Select Filters
   const search = document.getElementById("searchSym").value.toLowerCase();
   if (search) data = data.filter(d => d.symbol.toLowerCase().includes(search));
   
@@ -1346,14 +1930,50 @@ function renderRows() {
               </div>
             </div>
 
-            <!-- Setup Summary Cards -->
+            <!-- Plain-Thai Action Plan -->
+            ${generateActionPlanHtml(item)}
+
+            <!-- Interactive Position Sizing & Risk Calculator -->
+            ${generateCalculatorHtml(item)}
+
+            <!-- Setup Summary Cards with Tooltips -->
             <div class="setup-grid">
-              <div class="setup-box"><b>Entry Price</b><div>${fmt(item.entry)}</div></div>
-              <div class="setup-box"><b>Stop Loss</b><div style="color:var(--rose)">${fmt(item.stop)} <span style="font-size:0.75em; opacity:0.85;">(-${fmt(item.pct_loss)}%)</span></div></div>
-              <div class="setup-box"><b>Take Profit</b><div style="color:var(--emerald)">${fmt(item.target)} <span style="font-size:0.75em; opacity:0.85;">(+${fmt(item.pct_gain)}%)</span></div></div>
-              <div class="setup-box"><b>Demand Zone</b><div>${zoneText(item.zones.demand)}</div></div>
-              <div class="setup-box"><b>Supply Zone</b><div>${zoneText(item.zones.supply)}</div></div>
-              <div class="setup-box"><b>Fair Value Gap</b><div>${zoneText(item.zones.fvg)}</div></div>
+              <div class="setup-box">
+                <b>
+                  <span class="tooltip-wrap">Entry Price<span class="tooltip-icon">ℹ️</span><span class="tooltip-bubble">ราคาเปิดคำสั่งที่ได้เปรียบ อิงแนวรับ Demand หรือช่องว่างราคา FVG</span></span>
+                </b>
+                <div>${fmt(item.entry)}</div>
+              </div>
+              <div class="setup-box">
+                <b>
+                  <span class="tooltip-wrap">Stop Loss<span class="tooltip-icon">ℹ️</span><span class="tooltip-bubble">จุดตัดขาดทุนเมื่อผิดทาง วางไว้หลังแนว Invalidation โครงสร้างเสีย</span></span>
+                </b>
+                <div style="color:var(--rose)">${fmt(item.stop)} <span style="font-size:0.75em; opacity:0.85;">(-${fmt(item.pct_loss)}%)</span></div>
+              </div>
+              <div class="setup-box">
+                <b>
+                  <span class="tooltip-wrap">Take Profit<span class="tooltip-icon">ℹ️</span><span class="tooltip-bubble">เป้าหมายทำกำไร อิงแนวต้าน Supply หรือจุดที่สภาพคล่องกองอยู่หนาแน่น</span></span>
+                </b>
+                <div style="color:var(--emerald)">${fmt(item.target)} <span style="font-size:0.75em; opacity:0.85;">(+${fmt(item.pct_gain)}%)</span></div>
+              </div>
+              <div class="setup-box">
+                <b>
+                  <span class="tooltip-wrap">Demand Zone<span class="tooltip-icon">ℹ️</span><span class="tooltip-bubble">โซนแนวรับของสถาบันที่มีแรงซื้อหนาแน่น ราคาย่อลงมามักเกิดแรงดีดกลับ</span></span>
+                </b>
+                <div>${zoneText(item.zones.demand)}</div>
+              </div>
+              <div class="setup-box">
+                <b>
+                  <span class="tooltip-wrap">Supply Zone<span class="tooltip-icon">ℹ️</span><span class="tooltip-bubble">โซนแนวต้านของสถาบันที่มีแรงขายหนาแน่น ใช้เป็นเป้าหมายทำกำไร</span></span>
+                </b>
+                <div>${zoneText(item.zones.supply)}</div>
+              </div>
+              <div class="setup-box">
+                <b>
+                  <span class="tooltip-wrap">Fair Value Gap<span class="tooltip-icon">ℹ️</span><span class="tooltip-bubble">ช่องว่างราคาที่ราคาวิ่งพุ่งแรงผิดปกติ ราคามักจะย้อนกลับมาปิดช่องว่างนี้</span></span>
+                </b>
+                <div>${zoneText(item.zones.fvg)}</div>
+              </div>
             </div>
             
             ${(item.intrinsic_value != null || item.roe != null) ? `
@@ -1405,6 +2025,7 @@ function renderRows() {
     const item = latest.find(i => i.symbol === expandedSymbol);
     if (item) {
       setTimeout(() => renderECharts(item), 0);
+      setTimeout(() => attachCalcListeners(item), 0);
     }
   } else {
     if (activeChart && activeChart.remove) {
@@ -1951,18 +2572,79 @@ function renderECharts(item) {
     }
   }
 
-  const addLevel = (price, name, color) => {
-    if (!price || Number(price) <= 0) return;
+  const curr = currentMarket === "TH" ? "฿" : "$";
+
+  // Visual Prominent Target Lines with Badges
+  if (item.target && Number(item.target) > 0) {
     markLines.push({
-      name: name,
-      yAxis: Number(price),
-      lineStyle: { color: color, type: 'dotted', width: 1.2, opacity: 0.85 },
-      label: { formatter: '{b}', position: 'insideStartTop', color: color }
+      name: 'TP',
+      yAxis: Number(item.target),
+      lineStyle: { color: '#10b981', type: 'dashed', width: 2, opacity: 0.95 },
+      label: {
+        show: true,
+        position: 'end',
+        formatter: ` 🎯 TP: ${curr}${fmt(item.target)} (+${fmt(item.pct_gain)}%) `,
+        color: '#ffffff',
+        backgroundColor: '#059669',
+        padding: [4, 8],
+        borderRadius: 4,
+        fontWeight: 'bold',
+        fontSize: 11
+      }
     });
-  };
-  addLevel(item.entry, 'Entry', '#d97706');
-  addLevel(item.stop, 'SL', '#dc2626');
-  addLevel(item.target, 'TP', '#059669');
+  }
+
+  if (item.entry && Number(item.entry) > 0) {
+    markLines.push({
+      name: 'Entry',
+      yAxis: Number(item.entry),
+      lineStyle: { color: '#3b82f6', type: 'solid', width: 2, opacity: 0.95 },
+      label: {
+        show: true,
+        position: 'end',
+        formatter: ` 🔵 Entry: ${curr}${fmt(item.entry)} `,
+        color: '#ffffff',
+        backgroundColor: '#2563eb',
+        padding: [4, 8],
+        borderRadius: 4,
+        fontWeight: 'bold',
+        fontSize: 11
+      }
+    });
+  }
+
+  if (item.stop && Number(item.stop) > 0) {
+    markLines.push({
+      name: 'SL',
+      yAxis: Number(item.stop),
+      lineStyle: { color: '#ef4444', type: 'dashed', width: 2, opacity: 0.95 },
+      label: {
+        show: true,
+        position: 'end',
+        formatter: ` 🛑 SL: ${curr}${fmt(item.stop)} (-${fmt(item.pct_loss)}%) `,
+        color: '#ffffff',
+        backgroundColor: '#dc2626',
+        padding: [4, 8],
+        borderRadius: 4,
+        fontWeight: 'bold',
+        fontSize: 11
+      }
+    });
+  }
+
+  // Visual Risk/Reward Shaded Area
+  if (item.entry && item.target && Number(item.entry) > 0 && Number(item.target) > 0) {
+    markAreas.push([
+      { yAxis: Number(Math.min(item.entry, item.target)), itemStyle: { color: 'rgba(16, 185, 129, 0.08)' } },
+      { yAxis: Number(Math.max(item.entry, item.target)) }
+    ]);
+  }
+  if (item.entry && item.stop && Number(item.entry) > 0 && Number(item.stop) > 0) {
+    markAreas.push([
+      { yAxis: Number(Math.min(item.entry, item.stop)), itemStyle: { color: 'rgba(239, 68, 68, 0.08)' } },
+      { yAxis: Number(Math.max(item.entry, item.stop)) }
+    ]);
+  }
 
   const option = {
     backgroundColor: theme.bg,
@@ -2282,6 +2964,16 @@ function hydrateCachedScan() {
 document.getElementById("scanBtn").addEventListener("click", () => scan(true));
 document.getElementById("refreshBtn").addEventListener("click", () => scan(true));
 
+// Quick Filter Chips Event Listeners
+document.querySelectorAll(".filter-chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-chip").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentQuickFilter = btn.dataset.filter;
+    renderRows();
+  });
+});
+
 ["searchSym", "filterSource", "filterDecision", "armedOnly"].forEach(id => {
   document.getElementById(id).addEventListener("input", renderRows);
 });
@@ -2374,6 +3066,12 @@ function setMarket(market) {
     title.textContent = "Gold SMC Dashboard";
     sub.textContent = "COMEX Gold Futures (GC=F)";
   }
+
+  currentQuickFilter = "all";
+  document.querySelectorAll(".filter-chip").forEach(b => {
+    if (b.dataset.filter === "all") b.classList.add("active");
+    else b.classList.remove("active");
+  });
 
   scan(false);
 }
