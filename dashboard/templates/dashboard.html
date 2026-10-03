@@ -727,7 +727,7 @@ tr.detail-row.open {
 
 .setup-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -737,6 +737,8 @@ tr.detail-row.open {
   border-radius: var(--radius-md);
   padding: 12px 14px;
   box-shadow: var(--shadow-sm);
+  min-width: 0;
+  overflow: hidden;
 }
 .setup-box b {
   display: block;
@@ -745,12 +747,18 @@ tr.detail-row.open {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .setup-box div {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .checklist {
@@ -1241,7 +1249,12 @@ function labelBool(value) {
 
 function zoneText(zone) {
   if (!zone) return "n/a";
-  return `${zone.kind || zone.type} ${fmt(zone.low)} - ${fmt(zone.high)}`;
+  const kind = (zone.kind || zone.type || "").toLowerCase();
+  let prefix = "";
+  if (kind.includes("bull")) prefix = "▲ ";
+  else if (kind.includes("bear")) prefix = "▼ ";
+  else if (zone.kind || zone.type) prefix = `${zone.kind || zone.type} `;
+  return `${prefix}${fmt(zone.low)} - ${fmt(zone.high)}`;
 }
 
 function getVal(obj, path) {
@@ -1343,7 +1356,7 @@ function renderRows() {
               <div class="setup-box"><b>Fair Value Gap</b><div>${zoneText(item.zones.fvg)}</div></div>
             </div>
             
-            ${(item.intrinsic_value !== undefined || item.roe !== undefined) ? `
+            ${(item.intrinsic_value != null || item.roe != null) ? `
             <div class="setup-grid" style="border-top: 1px solid var(--border); padding-top: 12px;">
               <div class="setup-box"><b>Intrinsic Value</b>
                   <div style="color:${item.intrinsic_value && item.price && item.price < item.intrinsic_value ? 'var(--emerald)' : 'var(--rose)'}">
@@ -2005,11 +2018,13 @@ function renderECharts(item) {
   legend.style.pointerEvents = 'auto';
   legend.style.border = '1px solid var(--border)';
   legend.style.boxShadow = 'var(--shadow-md)';
-  legend.style.minWidth = '290px';
-  legend.style.maxWidth = '360px';
+  legend.style.minWidth = '280px';
+  legend.style.maxWidth = '340px';
   legend.style.maxHeight = 'calc(100% - 28px)';
   legend.style.overflowY = 'auto';
   container.appendChild(legend);
+
+  let isLegendCollapsed = false;
 
   const formatStat = (s, n) => {
     if (!s || !s[n]) return `<span style="color:var(--muted)">N/A</span>`;
@@ -2022,8 +2037,31 @@ function renderECharts(item) {
       legend.innerHTML = `<strong>${item.symbol}</strong><br><span style="color:var(--muted)">Hover over chart for details</span>`;
       return;
     }
-    const stats = calculatePatternStats(item.candles, idx);
     const color = priceData.close >= priceData.open ? 'var(--emerald)' : 'var(--rose)';
+
+    if (isLegendCollapsed) {
+      legend.style.minWidth = 'auto';
+      legend.style.maxWidth = 'auto';
+      legend.style.padding = '5px 10px';
+      legend.innerHTML = `
+        <div style="cursor:pointer; display:flex; align-items:center; gap:8px;" id="btnExpandLegend">
+          <span>📊 <b>${item.symbol}</b> <span style="color:${color}; font-weight:700;">${priceData.close.toFixed(2)}</span></span>
+          <span style="font-size:10px; color:var(--primary); font-weight:700; text-decoration:underline;">[Show Stats]</span>
+        </div>`;
+      const expandBtn = legend.querySelector("#btnExpandLegend");
+      if (expandBtn) {
+        expandBtn.onclick = () => {
+          isLegendCollapsed = false;
+          legend.style.minWidth = '280px';
+          legend.style.maxWidth = '340px';
+          legend.style.padding = '10px 14px';
+          setLegendContent(priceData, idx);
+        };
+      }
+      return;
+    }
+
+    const stats = calculatePatternStats(item.candles, idx);
     const barClose = priceData.close;
     const barVol = priceData.volume || 0;
 
@@ -2154,7 +2192,10 @@ function renderECharts(item) {
     }
 
     legend.innerHTML = `
-      <div style="font-weight:700; font-size:13px; margin-bottom:2px;">${item.symbol} <span style="font-size:10px; color:var(--muted); font-weight:normal; margin-left:4px">${priceData.time}</span></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+        <div style="font-weight:700; font-size:13px;">${item.symbol} <span style="font-size:10px; color:var(--muted); font-weight:normal; margin-left:4px">${priceData.time}</span></div>
+        <button type="button" id="btnCollapseLegend" style="border:none; background:transparent; cursor:pointer; font-size:10px; color:var(--muted); font-weight:700; padding:2px 4px;">[✕ Hide]</button>
+      </div>
       ${sectorHtml}
       <div style="display:flex; gap:6px; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:6px; font-size:10px; color:var(--muted)">
         <span>O: <span style="color:${color}; font-weight:600;">${priceData.open.toFixed(2)}</span></span>
@@ -2166,6 +2207,14 @@ function renderECharts(item) {
       ${accuracyHtml}
       ${patternsHtml}
     `;
+
+    const collapseBtn = legend.querySelector("#btnCollapseLegend");
+    if (collapseBtn) {
+      collapseBtn.onclick = () => {
+        isLegendCollapsed = true;
+        setLegendContent(priceData, idx);
+      };
+    }
   };
 
   setLegendContent(item.candles[item.candles.length - 1], item.candles.length - 1);
