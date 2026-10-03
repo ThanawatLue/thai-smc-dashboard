@@ -42,6 +42,13 @@
 7. **Instant DB Serving & Pre-calculated Caching (Sub-500ms):**
    - ผู้ใช้ทั่วไปที่เข้ามาดูหน้าเว็บ จะได้รับการส่งคืนข้อมูลสแกนล่าสุดจาก Database ทันทีในระดับ < 0.5 วินาที โดยไม่ต้องรอดึงราคาใหม่
    - GitHub Actions ทำหน้าที่สแกนเบื้องหลังและอัปเดตข้อมูลสดลง Database ตามสเกดดูล
+8. **ReOrc-Inspired Editorial FinTech Frontend & Dual Themes (NEW - Oct 2026):**
+   - ปรับโฉมหน้าตาใหม่ทั้งหมด โดยถอดดีไซน์สไตล์ AI Dark Neon ออก และนำ Design System สไตล์ [ReOrc.com](https://reorc.com/) มาใช้
+   - โทนสี Warm Cream (`#fbfbf9`) + การ์ดสีขาวบริสุทธิ์ (`#ffffff`) เส้นขอบ Hairline คมกริบ (`#e2e8f0`)
+   - ใช้ Typography คู่ฟอนต์ `Bricolage Grotesque` + `Plus Jakarta Sans` + `Noto Sans Thai` และ `JetBrains Mono` สำหรับตัวเลขการเงิน
+   - สถานะระบบแบบ Live Pill Badge พร้อมจุดกระพริบเขียวสด (Pulsing Emerald Dot) ระดับ Sub-200ms
+   - รองรับทั้งโหมด ReOrc Clean Light (ค่าเริ่มต้น) และ Sleek Slate Dark Mode
+   - ผ่านการทดสอบ Full E2E Browser Testing ครบทุกฟังก์ชัน (Search, Filter, Chart Rendering, Drawer, Market Switch, Theme Toggle)
 
 ---
 
@@ -84,4 +91,4 @@ stamp_trading/
    - บันทึกผลการสแกนย้อนหลังลง Database เพื่อนำมาประเมิน Win Rate และประสิทธิภาพของ SMC Setups ในอนาคต
 
 ---
-*อัปเดตล่าสุดเมื่อ: 25 กรกฎาคม 2026*
+*อัปเดตล่าสุดเมื่อ: 3 ตุลาคม 2026*

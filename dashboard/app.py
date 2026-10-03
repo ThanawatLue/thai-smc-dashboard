@@ -47,6 +47,7 @@ def _load_scan_cache(min_rr: float, market: str) -> dict | None:
             return None
             
         data = {
+            "generated_at": scan.created_at.strftime("%Y-%m-%d %H:%M:%S") if scan.created_at else None,
             "universe_meta": scan.universe_meta,
             "source_summary": scan.source_summary,
             "passed_counts": scan.passed_counts,

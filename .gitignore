@@ -4,5 +4,7 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 dashboard/state/
+state/
+*.bak
 *.egg-info/
 .tmp/

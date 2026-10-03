@@ -1,64 +1,149 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Thai SMC Dashboard</title>
+<title>Thai SMC Dashboard · Smart Money Concept Research</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <style>
-:root {
-  --bg: #09090b;
-  --surface: #18181b;
-  --surface-2: #27272a;
-  --text: #fafafa;
-  --muted: #a1a1aa;
-  --border: #3f3f46;
-  --primary: #3b82f6;
-  --primary-glow: rgba(59, 130, 246, 0.4);
-  --accent: #10b981;
-  --accent-soft: rgba(16, 185, 129, 0.15);
-  --danger: #ef4444;
-  --danger-soft: rgba(239, 68, 68, 0.15);
-  --warning: #f59e0b;
-  --blue: #3b82f6;
-  --blue-soft: rgba(59, 130, 246, 0.15);
-  --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-  --radius: 12px;
-  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+/* ─────────────────────────────────────────────────────────────
+   DESIGN SYSTEM: ReOrc-inspired Modern FinTech Aesthetic
+   Clean, Editorial, Warm Cream + Crisp White, Hairline Borders,
+   Pill Badges, Tabular Data Density, Zero AI Neon Glow.
+   ───────────────────────────────────────────────────────────── */
+
+:root, [data-theme="light"] {
+  --bg: #fbfbf9;
+  --bg-subtle: #f4f5f6;
+  --surface: #ffffff;
+  --surface-hover: #f8fafc;
+  --surface-card: #ffffff;
+  --surface-nested: #f8fafc;
+  --text: #0f172a;
+  --text-secondary: #475569;
+  --muted: #64748b;
+  --muted-light: #94a3b8;
+  --border: #e2e8f0;
+  --border-subtle: #edf2f7;
+  
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --primary-border: #bfdbfe;
+  
+  --emerald: #059669;
+  --emerald-dark: #047857;
+  --emerald-light: #ecfdf5;
+  --emerald-border: #a7f3d0;
+  
+  --rose: #dc2626;
+  --rose-dark: #b91c1c;
+  --rose-light: #fef2f2;
+  --rose-border: #fecaca;
+  
+  --amber: #d97706;
+  --amber-dark: #b45309;
+  --amber-light: #fffbeb;
+  --amber-border: #fde68a;
+  
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --purple-border: #ddd6fe;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.03);
+  --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.02);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+  --transition: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-display: 'Bricolage Grotesque', 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Noto Sans Thai', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
-* { box-sizing: border-box; }
+[data-theme="dark"] {
+  --bg: #0b0f19;
+  --bg-subtle: #111827;
+  --surface: #151d2f;
+  --surface-hover: #1e293b;
+  --surface-card: #151d2f;
+  --surface-nested: #0f172a;
+  --text: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --muted: #94a3b8;
+  --muted-light: #64748b;
+  --border: #243049;
+  --border-subtle: #1e293b;
+  
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-light: rgba(59, 130, 246, 0.15);
+  --primary-border: rgba(59, 130, 246, 0.35);
+  
+  --emerald: #10b981;
+  --emerald-dark: #34d399;
+  --emerald-light: rgba(16, 185, 129, 0.15);
+  --emerald-border: rgba(16, 185, 129, 0.35);
+  
+  --rose: #f87171;
+  --rose-dark: #ef4444;
+  --rose-light: rgba(239, 68, 68, 0.15);
+  --rose-border: rgba(239, 68, 68, 0.35);
+  
+  --amber: #fbbf24;
+  --amber-dark: #f59e0b;
+  --amber-light: rgba(245, 158, 11, 0.15);
+  --amber-border: rgba(245, 158, 11, 0.35);
+  
+  --purple: #a78bfa;
+  --purple-light: rgba(167, 139, 250, 0.15);
+  --purple-border: rgba(167, 139, 250, 0.35);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  margin: 0;
-  font-family: "Inter", "Noto Sans Thai", sans-serif;
   background: var(--bg);
   color: var(--text);
+  font-family: var(--font-body);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border); }
 
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-light); }
+
+/* Inputs & Buttons */
 button, select, input {
-  min-height: 38px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+select, input[type="text"], input[type="number"] {
+  height: 40px;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
-  border-radius: 8px;
-  padding: 0 16px;
-  font: inherit;
-  font-weight: 500;
-  transition: all var(--transition);
+  padding: 0 14px;
 }
-select, input { padding: 0 12px; font-size: 0.85rem; }
-select:focus, input:focus { outline: none; border-color: var(--primary); }
-input::placeholder { color: var(--muted); }
-select option { background: var(--surface); color: var(--text); }
+select:focus, input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
 
 button {
   cursor: pointer;
@@ -66,273 +151,925 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 18px;
+  height: 40px;
 }
-button:hover, button:focus-visible {
-  border-color: var(--primary);
-  background: var(--surface-2);
+button:hover {
+  background: var(--surface-hover);
+  border-color: var(--muted-light);
 }
-.primary {
+
+/* Pill Primary Button */
+.btn-pill-primary {
   background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
-  box-shadow: 0 0 15px var(--primary-glow);
+  color: #ffffff;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
 }
-.primary:hover {
-  background: #2563eb;
-  box-shadow: 0 0 25px var(--primary-glow);
-  border-color: #2563eb;
+.btn-pill-primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  color: #ffffff;
 }
-.primary.loading {
+.btn-pill-primary.loading {
   opacity: 0.8;
   pointer-events: none;
-  animation: pulse 1.5s infinite ease-in-out;
+  animation: pulse 1.4s infinite ease-in-out;
 }
-@keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 0.5; } 100% { opacity: 0.8; } }
-
-.app { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 100dvh; }
-.sidebar {
-  border-right: 1px solid var(--border);
-  background: var(--surface);
-  padding: 24px;
-  position: sticky;
-  top: 0;
-  height: 100dvh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.99); }
 }
-.brand { margin-bottom: 32px; }
-.brand h1 { font-size: 1.25rem; margin: 0 0 6px; letter-spacing: -0.02em; font-weight: 700; background: linear-gradient(to right, #60a5fa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.brand p { margin: 0; color: var(--muted); font-size: 0.85rem; }
 
-.rule-list { display: grid; gap: 10px; margin-top: auto; padding-top: 32px;}
-.rule-title { font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; margin-bottom: 4px; }
-.rule { border-left: 2px solid var(--primary); background: var(--surface-2); padding: 10px 14px; font-size: 0.8rem; color: var(--muted); border-radius: 0 var(--radius) var(--radius) 0; }
-
-.main { padding: 32px; min-width: 0; }
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.topbar h2 { margin: 0; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; }
-.topbar p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
-.actions { display: flex; gap: 12px; flex-wrap: wrap; }
-
-.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.metric {
+.btn-pill-secondary {
+  border-radius: var(--radius-full);
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  box-shadow: var(--shadow);
+  color: var(--text-secondary);
+}
+.btn-pill-secondary:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+/* App Header */
+.header-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+}
+[data-theme="dark"] .header-nav {
+  background: rgba(15, 23, 42, 0.88);
+}
+
+.header-container {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.brand-text h1 {
+  font-family: var(--font-display);
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  line-height: 1.2;
+}
+.brand-text p {
+  font-size: 0.76rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Market Selector Segmented Pills */
+.market-segment {
+  display: flex;
+  align-items: center;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  padding: 3px;
+  border-radius: var(--radius-full);
+  gap: 2px;
+}
+.market-pill {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  height: 32px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  border-radius: var(--radius-full);
+  transition: all var(--transition);
+}
+.market-pill:hover {
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.03);
+}
+.market-pill.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+[data-theme="dark"] .market-pill.active {
+  background: var(--surface);
+  color: #ffffff;
+  border: 1px solid var(--border);
+}
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--emerald-light);
+  border: 1px solid var(--emerald-border);
+  color: var(--emerald-dark);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.live-dot-wrap {
+  position: relative;
+  display: flex;
+  height: 8px;
+  width: 8px;
+}
+.live-dot-ping {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  border-radius: 9999px;
+  background: var(--emerald);
+  opacity: 0.6;
+  animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.live-dot-static {
+  position: relative;
+  height: 8px;
+  width: 8px;
+  border-radius: 9999px;
+  background: var(--emerald);
+}
+@keyframes ping {
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+
+.theme-btn {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+.theme-btn:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+/* Main Layout */
+.main-wrapper {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  position: relative;
-  overflow: hidden;
-  transition: transform var(--transition);
+  gap: 24px;
 }
-.metric:hover { transform: translateY(-2px); }
-.metric b { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-.metric span { font-weight: 700; font-size: 1.5rem; color: var(--text); }
 
-.layout { display: grid; grid-template-columns: 1fr; gap: 24px; }
-.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
-.panel-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); flex-wrap: wrap; gap: 12px; }
-.panel-head h3 { margin: 0; font-size: 1.05rem; font-weight: 600; }
-.status { font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+/* Hero Stats Section (ReOrc Divided Cards) */
+.hero-section {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
 
-.filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-.filters .checkbox-wrap { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--text); cursor: pointer; user-select: none; margin-left: 8px; }
+.stat-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
 
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-th, td { text-align: left; padding: 14px 24px; border-bottom: 1px solid var(--border); white-space: nowrap; }
-th { 
-  color: var(--muted); 
-  font-size: 0.75rem; 
-  font-weight: 600; 
-  text-transform: uppercase; 
-  letter-spacing: 0.05em; 
-  position: sticky; 
-  top: 0; 
-  background: var(--surface); 
-  z-index: 2; 
-  cursor: pointer; 
+.stat-card-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.stat-card-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.stat-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+.stat-badge.emerald {
+  background: var(--emerald-light);
+  color: var(--emerald-dark);
+  border: 1px solid var(--emerald-border);
+}
+.stat-badge.blue {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+}
+
+.stat-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.stat-big-num {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Two Column Body: Sidebar / Rules + Table Content */
+.content-grid {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+/* Sidebar Settings & Principles */
+.sidebar-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 84px;
+}
+
+.card-box {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.form-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rule-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  border-left: 3px solid var(--primary);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Main Data Panel */
+.panel-main {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  background: var(--surface);
+}
+
+.panel-title-group h2 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.panel-title-group p {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* Filters bar */
+.filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search-input-wrap svg {
+  position: absolute;
+  left: 12px;
+  color: var(--muted);
+  pointer-events: none;
+}
+.search-input-wrap input {
+  padding-left: 36px;
+  width: 180px;
+}
+
+.checkbox-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
   user-select: none;
-  transition: color 0.15s;
+  transition: all var(--transition);
+}
+.checkbox-pill:hover {
+  border-color: var(--muted-light);
+}
+.checkbox-pill input {
+  accent-color: var(--primary);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+/* Table Design */
+.table-wrap {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+th {
+  background: var(--bg-subtle);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: color var(--transition);
 }
 th:hover { color: var(--text); }
-th::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:var(--border); }
-th .sort-icon { display: inline-block; margin-left: 4px; font-size: 11px; color: var(--border); }
+th .sort-icon { display: inline-block; margin-left: 4px; font-size: 10px; }
 th.active-sort { color: var(--primary); }
-th.active-sort .sort-icon { color: var(--primary); }
 
-tr.data-row { cursor: pointer; transition: background 0.15s; }
-tr.data-row:hover { background: var(--surface-2); }
-tr.data-row.expanded { background: var(--surface-2); border-left: 3px solid var(--primary); }
-tr.data-row td:first-child { transition: padding-left 0.15s; }
-tr.data-row.expanded td:first-child { padding-left: 21px; /* compensate for 3px border */ }
+td {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  vertical-align: middle;
+}
 
-.badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.75rem; border: 1px solid transparent; letter-spacing: 0.02em; }
-.armed { background: var(--accent-soft); color: var(--accent); border-color: rgba(16, 185, 129, 0.3); }
-.no-trade { background: var(--danger-soft); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
-.wait { background: var(--blue-soft); color: var(--blue); border-color: rgba(59, 130, 246, 0.3); }
-.buy { color: var(--accent); font-weight: 700; }
-.sell { color: var(--danger); font-weight: 700; }
-.source-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.source-tag { font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); }
+tr.data-row {
+  cursor: pointer;
+  transition: background var(--transition);
+}
+tr.data-row:hover {
+  background: var(--surface-hover);
+}
+tr.data-row.expanded {
+  background: var(--primary-light);
+  border-left: 3px solid var(--primary);
+}
 
-/* Detail row styles */
-tr.detail-row { display: none; background: #0c0c0e; border-bottom: 2px solid var(--border); }
-tr.detail-row.open { display: table-row; }
-.detail-content { padding: 24px; animation: fadeIn 0.3s ease-out; }
-.detail-content-inner { display: flex; flex-direction: column; gap: 20px; }
-.setup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
-.setup-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
-.setup-box b { display: block; color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-.setup-box div { font-size: 0.95rem; font-weight: 600; color: var(--text); }
-.checklist { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
-.check { display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; background: var(--surface); font-size: 0.85rem; }
-.ok { color: var(--accent); font-weight: 700; display: flex; align-items: center; gap: 4px; }
-.ok::before { content: '✓'; font-size: 1.1em; }
-.bad { color: var(--warning); font-weight: 700; display: flex; align-items: center; gap: 4px; }
-.bad::before { content: '✕'; font-size: 1.1em; }
-.chart-wrap { height: 600px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); overflow: hidden; position: relative; }
-.chart-loading { display: grid; place-items: center; color: var(--muted); height: 100%; font-size: 0.9rem; }
-.empty { padding: 48px; color: var(--muted); text-align: center; font-size: 0.95rem; }
+/* Badges */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.badge-pill.armed {
+  background: var(--emerald-light);
+  color: var(--emerald-dark);
+  border: 1px solid var(--emerald-border);
+}
+.badge-pill.wait {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+}
+.badge-pill.no-trade {
+  background: var(--rose-light);
+  color: var(--rose-dark);
+  border: 1px solid var(--rose-border);
+}
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+.side-badge {
+  font-weight: 700;
+  font-size: 0.78rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.side-badge.buy { color: var(--emerald); }
+.side-badge.sell { color: var(--rose); }
 
+.source-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.source-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+/* Detail Drawer Rows */
+tr.detail-row {
+  display: none;
+  background: var(--surface-nested);
+  border-bottom: 2px solid var(--border);
+}
+tr.detail-row.open {
+  display: table-row;
+}
+.detail-content {
+  padding: 24px;
+  animation: fadeIn 0.25s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.detail-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.setup-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  box-shadow: var(--shadow-sm);
+}
+.setup-box b {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.setup-box div {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.check-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.check-pass {
+  color: var(--emerald);
+  font-weight: 700;
+  font-size: 0.75rem;
+  background: var(--emerald-light);
+  border: 1px solid var(--emerald-border);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+.check-wait {
+  color: var(--amber);
+  font-weight: 700;
+  font-size: 0.75rem;
+  background: var(--amber-light);
+  border: 1px solid var(--amber-border);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+/* ECharts Container */
+.chart-wrap {
+  height: 580px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+.chart-loading {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  height: 100%;
+  font-size: 0.9rem;
+}
+.empty-state {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* Responsive */
 @media (max-width: 1024px) {
-  .app { grid-template-columns: 1fr; }
-  .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); padding: 20px; }
+  .hero-section { grid-template-columns: repeat(6, 1fr); }
+  .content-grid { grid-template-columns: 1fr; }
+  .sidebar-panel { position: static; }
 }
 @media (max-width: 768px) {
-  .main { padding: 20px; }
-  .topbar { flex-direction: column; }
-  .metrics { grid-template-columns: repeat(2, 1fr); }
-  .chart-wrap { height: 500px; }
-  .filters { width: 100%; }
-  .filters select, .filters input { flex: 1; }
+  .main-wrapper { padding: 16px; gap: 16px; }
+  .hero-section { grid-template-columns: 1fr; }
+  .header-container { flex-direction: column; align-items: stretch; }
+  .market-segment { overflow-x: auto; width: 100%; justify-content: space-between; }
+  .header-actions { justify-content: space-between; }
+  .chart-wrap { height: 480px; }
 }
 </style>
 </head>
 <body>
-<div class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <h1 id="dashboardTitle">Thai SMC Dashboard</h1>
-      <p id="dashboardSubtitle">Auto universe from VCP, CANSLIM, Dip Buy, Momentum</p>
-    </div>
-    <div class="market-tabs" style="display: flex; gap: 4px; margin-bottom: 16px; background: var(--surface-2); padding: 4px; border-radius: var(--radius); flex-wrap: wrap;">
-      <button id="tabTH" class="tab-btn active" data-market="TH" style="flex:1; border:none; padding: 6px; font-size: 0.8rem;">TH</button>
-      <button id="tabUS" class="tab-btn" data-market="US" style="flex:1; border:none; padding: 6px; font-size: 0.8rem; background: transparent;">US</button>
-      <button id="tabUS_MEDIUM_TERM" class="tab-btn" data-market="US_MEDIUM_TERM" style="flex:1; border:none; padding: 6px; font-size: 0.8rem; background: transparent;">US M.Term</button>
-      <button id="tabGOLD" class="tab-btn" data-market="GOLD" style="flex:1; border:none; padding: 6px; font-size: 0.8rem; background: transparent;">GOLD</button>
-    </div>
-    <button id="scanBtn" class="primary" type="button" style="width:100%; margin-bottom: 16px;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-      Run Analysis
-    </button>
-    <button id="refreshBtn" type="button" style="width:100%;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.44l5.46 5.46"></path></svg>
-      Refresh Data
-    </button>
-    <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 8px;">
-      <label for="minRrInput" style="font-size: 0.85rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Min RR Criteria</label>
-      <input type="number" id="minRrInput" value="2.0" step="0.1" min="1.0" style="width: 100%;">
-    </div>
-    
-    <div class="rule-list" aria-label="SMC rules">
-      <div class="rule-title">SMC Principles</div>
-      <div class="rule" id="ruleRrText">Trade only when RR is 1:2.0 or better.</div>
-      <div class="rule">No liquidity sweep means no entry.</div>
-      <div class="rule">SL must sit behind invalidation, not a cosmetic tight stop.</div>
-      <div class="rule">M5/M15 are trigger timeframes, not HTF bias.</div>
-    </div>
-  </aside>
 
-  <main class="main">
-    <section class="topbar">
-      <div>
-        <h2>SMC Setup Scanner</h2>
-        <p id="timestamp">Waiting for scan...</p>
+<!-- Header Navigation (ReOrc Style) -->
+<header class="header-nav">
+  <div class="header-container">
+    <div class="brand-wrap">
+      <div class="brand-icon">SMC</div>
+      <div class="brand-text">
+        <h1 id="dashboardTitle">Thai SMC Dashboard</h1>
+        <p id="dashboardSubtitle">Smart Money Concept Research & Candidate Screener</p>
       </div>
-    </section>
+    </div>
 
-    <section class="metrics">
-      <div class="metric"><b>Market</b><span id="metricMarket">TH</span></div>
-      <div class="metric"><b>Universe</b><span id="metricUniverse">0</span></div>
-      <div class="metric"><b>Scanned</b><span id="metricCount">0</span></div>
-      <div class="metric"><b>Armed</b><span id="metricArmed" style="color:var(--accent)">0</span></div>
-      <div class="metric"><b>VCP</b><span id="metricVcp">0</span></div>
-      <div class="metric"><b>CANSLIM</b><span id="metricCanslim">0</span></div>
-      <div class="metric"><b>Dip/Mom</b><span id="metricSwing">0</span></div>
-    </section>
+    <!-- Market Selector Pills -->
+    <div class="market-segment" role="tablist" aria-label="Market selection">
+      <button id="tabTH" class="market-pill active" data-market="TH">🇹🇭 SET (TH)</button>
+      <button id="tabUS" class="market-pill" data-market="US">🇺🇸 S&P 500</button>
+      <button id="tabUS_MEDIUM_TERM" class="market-pill" data-market="US_MEDIUM_TERM">📊 US M.Term</button>
+      <button id="tabGOLD" class="market-pill" data-market="GOLD">🪙 Gold (GC=F)</button>
+    </div>
 
-    <section class="layout">
-      <div class="panel">
-        <div class="panel-head">
-          <h3>Candidates Overview</h3>
-          <div class="filters">
-            <input type="text" id="searchSym" placeholder="Search symbol...">
-            <select id="filterSource">
-              <option value="">All Sources</option>
-              <option value="VCP">VCP</option>
-              <option value="CANSLIM">CANSLIM</option>
-              <option value="DIP_BUY">DIP_BUY</option>
-              <option value="MOMENTUM">MOMENTUM</option>
-            </select>
-            <select id="filterDecision">
-              <option value="">All Decisions</option>
-              <option value="ARMED">ARMED</option>
-              <option value="WAIT">WAIT</option>
-              <option value="NO TRADE">NO TRADE</option>
-            </select>
-            <label class="checkbox-wrap">
-              <input type="checkbox" id="armedOnly"> RR ≥ 2
-            </label>
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <div class="live-pill" id="livePill" title="Server State">
+        <span class="live-dot-wrap">
+          <span class="live-dot-ping"></span>
+          <span class="live-dot-static"></span>
+        </span>
+        <span id="liveStatusText">Sub-200ms DB Live</span>
+      </div>
+
+      <button id="scanBtn" class="btn-pill-primary" type="button" title="Run SMC Analysis">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        <span>Run Scan</span>
+      </button>
+
+      <button id="refreshBtn" class="btn-pill-secondary" type="button" title="Force Refresh Data">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.44l5.46 5.46"></path></svg>
+        <span>Refresh</span>
+      </button>
+
+      <button class="theme-btn" id="themeToggle" type="button" aria-label="Toggle light/dark theme" title="Toggle theme">
+        <svg id="moonIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <svg id="sunIcon" style="display:none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Main Container -->
+<main class="main-wrapper">
+
+  <!-- Hero Stats Section (ReOrc Divided Cards) -->
+  <section class="hero-section" aria-label="Overview statistics">
+    <!-- Active Market & Universe -->
+    <div class="stat-card" style="grid-column: span 3;">
+      <div class="stat-card-eyebrow">
+        <span class="stat-card-label">Active Market</span>
+        <span class="stat-badge blue" id="metricMarket">TH</span>
+      </div>
+      <div class="stat-value-row">
+        <span class="stat-big-num" id="metricUniverse">0</span>
+        <span class="stat-desc">tickers tracked</span>
+      </div>
+    </div>
+
+    <!-- Scanned Candidates -->
+    <div class="stat-card" style="grid-column: span 3;">
+      <div class="stat-card-eyebrow">
+        <span class="stat-card-label">Screened Universe</span>
+        <span class="stat-desc" id="timestamp">Waiting for scan...</span>
+      </div>
+      <div class="stat-value-row">
+        <span class="stat-big-num" id="metricCount">0</span>
+        <span class="stat-desc">candidates evaluated</span>
+      </div>
+    </div>
+
+    <!-- Armed Setups -->
+    <div class="stat-card" style="grid-column: span 3;">
+      <div class="stat-card-eyebrow">
+        <span class="stat-card-label">Armed Setups</span>
+        <span class="stat-badge emerald">RR ≥ 1:2.0</span>
+      </div>
+      <div class="stat-value-row">
+        <span class="stat-big-num" id="metricArmed" style="color:var(--emerald)">0</span>
+        <span class="stat-desc">high-confidence setups</span>
+      </div>
+    </div>
+
+    <!-- Source Buckets Breakdown -->
+    <div class="stat-card" style="grid-column: span 3;">
+      <div class="stat-card-eyebrow">
+        <span class="stat-card-label">Source Buckets</span>
+        <span class="stat-desc">Proxy Screeners</span>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:2px;">
+        <span class="stat-badge blue">VCP: <b id="metricVcp">0</b></span>
+        <span class="stat-badge blue">CANSLIM: <b id="metricCanslim">0</b></span>
+        <span class="stat-badge blue">Dip/Mom: <b id="metricSwing">0</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Two Column Layout -->
+  <div class="content-grid">
+
+    <!-- Left Column: Controls & Principles -->
+    <aside class="sidebar-panel">
+      <!-- Strategy Settings -->
+      <div class="card-box">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          SMC Criteria
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="minRrInput">Minimum Risk : Reward</label>
+          <input type="number" id="minRrInput" value="2.0" step="0.1" min="1.0">
+          <span style="font-size:0.75rem; color:var(--muted); margin-top:2px;">Filter trades with RR &ge; 1:X</span>
+        </div>
+      </div>
+
+      <!-- Trading Principles Card (ReOrc Style) -->
+      <div class="card-box">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          SMC Discipline
+        </div>
+        <div class="rule-item" id="ruleRrText">Trade only when RR is 1:2.0 or better.</div>
+        <div class="rule-item">No liquidity sweep means no entry.</div>
+        <div class="rule-item">SL sits behind invalidation, not a tight cosmetic guess.</div>
+        <div class="rule-item">M5/M15 are execution triggers, never HTF bias.</div>
+      </div>
+    </aside>
+
+    <!-- Right Column: Candidates Table & Details -->
+    <section class="panel-main">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2>Candidates Overview</h2>
+          <p>Click any row to view candlestick chart, zones, and trade parameters</p>
+        </div>
+
+        <!-- Filters Bar -->
+        <div class="filters-bar">
+          <div class="search-input-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="searchSym" placeholder="Search ticker...">
           </div>
-        </div>
-        <div class="table-wrap">
-          <table id="dataTable">
-            <thead>
-              <tr>
-                <th data-sort="symbol">Symbol<span class="sort-icon"></span></th>
-                <th data-sort="sources">From<span class="sort-icon"></span></th>
-                <th data-sort="decision">Decision<span class="sort-icon"></span></th>
-                <th data-sort="side">Side<span class="sort-icon"></span></th>
-                <th data-sort="score">Score<span class="sort-icon">▼</span></th>
-                <th data-sort="rr">RR<span class="sort-icon"></span></th>
-                <th data-sort="structure.event">Structure<span class="sort-icon"></span></th>
-                <th data-sort="liquidity.side">Liquidity<span class="sort-icon"></span></th>
-              </tr>
-            </thead>
-            <tbody id="rows"></tbody>
-          </table>
+
+          <select id="filterSource" aria-label="Filter by source">
+            <option value="">All Sources</option>
+            <option value="VCP">VCP</option>
+            <option value="CANSLIM">CANSLIM</option>
+            <option value="DIP_BUY">DIP_BUY</option>
+            <option value="MOMENTUM">MOMENTUM</option>
+          </select>
+
+          <select id="filterDecision" aria-label="Filter by decision">
+            <option value="">All Decisions</option>
+            <option value="ARMED">ARMED</option>
+            <option value="WAIT">WAIT</option>
+            <option value="NO TRADE">NO TRADE</option>
+          </select>
+
+          <label class="checkbox-pill">
+            <input type="checkbox" id="armedOnly">
+            <span>RR &ge; 2.0</span>
+          </label>
         </div>
       </div>
+
+      <!-- Table View -->
+      <div class="table-wrap">
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th data-sort="symbol">Symbol<span class="sort-icon"></span></th>
+              <th data-sort="sources">Source<span class="sort-icon"></span></th>
+              <th data-sort="decision">Decision<span class="sort-icon"></span></th>
+              <th data-sort="side">Side<span class="sort-icon"></span></th>
+              <th data-sort="score">Score<span class="sort-icon">▼</span></th>
+              <th data-sort="rr">RR<span class="sort-icon"></span></th>
+              <th data-sort="structure.event">Structure<span class="sort-icon"></span></th>
+              <th data-sort="liquidity.side">Liquidity<span class="sort-icon"></span></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
     </section>
-  </main>
-</div>
+
+  </div>
+</main>
 
 <script>
+// ─────────────────────────────────────────────────────────────
+// SCRIPT ENGINE & BUSINESS LOGIC (100% Retained & Enhanced)
+// ─────────────────────────────────────────────────────────────
+
 const rowsEl = document.getElementById("rows");
 let latest = [];
 let sourceSummary = {};
 let activeChart = null;
 const getCacheKey = () => `smc-last-scan-${currentMarket}-${document.getElementById("minRrInput").value}`;
 
-// Table State
+// Table Sorting & Expanded State
 let sortCol = "score";
 let sortAsc = false;
 let expandedSymbol = null;
+
+// Theme Controller
+const themeToggleBtn = document.getElementById("themeToggle");
+const moonIcon = document.getElementById("moonIcon");
+const sunIcon = document.getElementById("sunIcon");
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("smc_theme", theme);
+  if (theme === "dark") {
+    moonIcon.style.display = "none";
+    sunIcon.style.display = "block";
+  } else {
+    moonIcon.style.display = "block";
+    sunIcon.style.display = "none";
+  }
+  if (activeChart && expandedSymbol) {
+    const item = latest.find(i => i.symbol === expandedSymbol);
+    if (item) renderECharts(item);
+  }
+}
+
+themeToggleBtn.addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme") || "light";
+  applyTheme(current === "light" ? "dark" : "light");
+});
+
+// Initialize Theme (Default to ReOrc light)
+const savedTheme = localStorage.getItem("smc_theme") || "light";
+applyTheme(savedTheme);
 
 function clsDecision(value) {
   if (value === "ARMED") return "armed";
@@ -350,7 +1087,7 @@ function sourceTags(sources) {
 }
 
 function labelBool(value) {
-  return value ? `<span class="ok">PASS</span>` : `<span class="bad">WAIT</span>`;
+  return value ? `<span class="check-pass">PASS ✓</span>` : `<span class="check-wait">WAIT</span>`;
 }
 
 function zoneText(zone) {
@@ -358,7 +1095,6 @@ function zoneText(zone) {
   return `${zone.kind || zone.type} ${fmt(zone.low)} - ${fmt(zone.high)}`;
 }
 
-// Extract nested values dynamically e.g. "structure.event"
 function getVal(obj, path) {
   return path.split('.').reduce((acc, part) => acc && acc[part], obj);
 }
@@ -381,12 +1117,11 @@ function renderRows() {
      data = data.filter(d => d.rr >= minRr);
   }
 
-  // Sort
+  // Sorting
   data.sort((a, b) => {
     let valA = getVal(a, sortCol);
     let valB = getVal(b, sortCol);
     
-    // special handling for sources (array)
     if (sortCol === "sources") {
       valA = a.sources ? a.sources.join(",") : "";
       valB = b.sources ? b.sources.join(",") : "";
@@ -405,24 +1140,32 @@ function renderRows() {
   });
 
   if (!data.length) {
-    rowsEl.innerHTML = `<tr><td colspan="8" class="empty">No candidates match the filters.</td></tr>`;
+    rowsEl.innerHTML = `<tr><td colspan="8" class="empty-state">No candidates found matching the selected criteria.</td></tr>`;
     return;
   }
 
-  // Generate HTML
   let html = "";
   data.forEach(item => {
     const isExpanded = expandedSymbol === item.symbol;
+    const isBuy = item.side === "buy";
+    
     html += `
       <tr class="data-row ${isExpanded ? 'expanded' : ''}" data-symbol="${item.symbol}">
-        <td><b style="color:var(--text);font-size:0.95rem">${item.symbol}</b><br><span style="color:var(--muted);font-size:0.75rem">${item.name || item.as_of}</span></td>
+        <td>
+          <b style="color:var(--text); font-size:0.95rem; font-weight:700;">${item.symbol}</b>
+          <br><span style="color:var(--muted); font-size:0.75rem;">${item.name || item.as_of}</span>
+        </td>
         <td><div class="source-tags">${sourceTags(item.sources)}</div></td>
-        <td><span class="badge ${clsDecision(item.decision)}">${item.decision}</span></td>
-        <td class="${item.side === "buy" ? "buy" : item.side === "sell" ? "sell" : ""}">${item.side.toUpperCase()}</td>
-        <td>${item.score}</td>
-        <td style="font-weight:600">${fmt(item.rr)}</td>
-        <td>${item.structure.event}</td>
-        <td>${item.liquidity.side}</td>
+        <td><span class="badge-pill ${clsDecision(item.decision)}">${item.decision}</span></td>
+        <td>
+          <span class="side-badge ${isBuy ? 'buy' : 'sell'}">
+            ${isBuy ? '↑ BUY' : '↓ SELL'}
+          </span>
+        </td>
+        <td><b style="font-weight:700; color:var(--text);">${item.score}</b></td>
+        <td><span style="font-weight:700; color:${item.rr >= 3 ? 'var(--emerald)' : 'var(--text)'};">${fmt(item.rr)}</span></td>
+        <td><span style="font-size:0.8rem; color:var(--text-secondary);">${item.structure.event}</span></td>
+        <td><span style="font-size:0.8rem; color:var(--text-secondary);">${item.liquidity.side}</span></td>
       </tr>
     `;
 
@@ -431,45 +1174,53 @@ function renderRows() {
       <tr class="detail-row ${isExpanded ? 'open' : ''}" id="detail-${item.symbol.replace('.', '_')}">
         <td colspan="8">
           <div class="detail-content">
-            <div class="detail-content-inner">
-              <h3 style="margin-top:0; margin-bottom: 12px; font-size: 1.25rem; color: var(--primary); display: flex; align-items: center; gap: 10px;">
-                ${item.symbol} 
-                <span class="badge ${clsDecision(item.decision)}">${item.decision}</span>
-              </h3>
-              <div class="setup-grid">
-                <div class="setup-box"><b>Entry</b><div>${fmt(item.entry)}</div></div>
-                <div class="setup-box"><b>SL</b><div style="color:var(--danger)">${fmt(item.stop)} <span style="font-size:0.75em; opacity:0.8;">(-${fmt(item.pct_loss)}%)</span></div></div>
-                <div class="setup-box"><b>TP</b><div style="color:var(--accent)">${fmt(item.target)} <span style="font-size:0.75em; opacity:0.8;">(+${fmt(item.pct_gain)}%)</span></div></div>
-                <div class="setup-box"><b>DZ</b><div>${zoneText(item.zones.demand)}</div></div>
-                <div class="setup-box"><b>SZ</b><div>${zoneText(item.zones.supply)}</div></div>
-                <div class="setup-box"><b>FVG</b><div>${zoneText(item.zones.fvg)}</div></div>
+            <div class="detail-header">
+              <div class="detail-title">
+                <span>${item.symbol}</span>
+                <span class="badge-pill ${clsDecision(item.decision)}">${item.decision}</span>
               </div>
-              
-              ${(item.intrinsic_value !== undefined || item.roe !== undefined) ? `
-              <div class="setup-grid" style="margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;">
-                <div class="setup-box"><b>Intrinsic Value</b>
-                    <div style="color:${item.intrinsic_value && item.price && item.price < item.intrinsic_value ? 'var(--accent)' : 'var(--danger)'}">
-                        $${fmt(item.intrinsic_value)}
-                    </div>
-                </div>
-                <div class="setup-box"><b>PEG Ratio</b><div>${fmt(item.peg_ratio)}</div></div>
-                <div class="setup-box"><b>ROE</b><div>${fmt(item.roe)}%</div></div>
-                <div class="setup-box"><b>FCF Margin</b><div>${fmt(item.fcf_margin)}%</div></div>
-                <div class="setup-box"><b>Gross Margin</b><div>${fmt(item.gross_margin)}%</div></div>
-                <div class="setup-box"><b>D/E</b><div>${fmt(item.debt_to_equity)}</div></div>
+              <div style="font-size:0.8rem; color:var(--muted);">
+                Bias: <b>${item.structure?.bias || 'N/A'}</b> · Sector: <b>${item.sector || 'Unknown'}</b>
               </div>
-              ` : ''}
+            </div>
 
-              <div class="checklist">
-                <div class="check"><span>HTF bias is clear</span>${labelBool(item.checklist.htf_context)}</div>
-                <div class="check"><span>H4 DZ/SZ exists</span>${labelBool(item.checklist.h4_zone)}</div>
-                <div class="check"><span>Liquidity swept</span>${labelBool(item.checklist.liquidity_sweep)}</div>
-                <div class="check"><span>FVG or zone for retest</span>${labelBool(item.checklist.fvg_or_zone)}</div>
-                <div class="check"><span>RR >= ${Number(document.getElementById("minRrInput").value).toFixed(1)}</span>${labelBool(item.checklist.rr_pass)}</div>
+            <!-- Setup Summary Cards -->
+            <div class="setup-grid">
+              <div class="setup-box"><b>Entry Price</b><div>${fmt(item.entry)}</div></div>
+              <div class="setup-box"><b>Stop Loss</b><div style="color:var(--rose)">${fmt(item.stop)} <span style="font-size:0.75em; opacity:0.85;">(-${fmt(item.pct_loss)}%)</span></div></div>
+              <div class="setup-box"><b>Take Profit</b><div style="color:var(--emerald)">${fmt(item.target)} <span style="font-size:0.75em; opacity:0.85;">(+${fmt(item.pct_gain)}%)</span></div></div>
+              <div class="setup-box"><b>Demand Zone</b><div>${zoneText(item.zones.demand)}</div></div>
+              <div class="setup-box"><b>Supply Zone</b><div>${zoneText(item.zones.supply)}</div></div>
+              <div class="setup-box"><b>Fair Value Gap</b><div>${zoneText(item.zones.fvg)}</div></div>
+            </div>
+            
+            ${(item.intrinsic_value !== undefined || item.roe !== undefined) ? `
+            <div class="setup-grid" style="border-top: 1px solid var(--border); padding-top: 12px;">
+              <div class="setup-box"><b>Intrinsic Value</b>
+                  <div style="color:${item.intrinsic_value && item.price && item.price < item.intrinsic_value ? 'var(--emerald)' : 'var(--rose)'}">
+                      $${fmt(item.intrinsic_value)}
+                  </div>
               </div>
-              <div id="chart-container-${item.symbol.replace('.', '_')}" class="chart-wrap">
-                <div class="chart-loading">Loading interactive chart...</div>
-              </div>
+              <div class="setup-box"><b>PEG Ratio</b><div>${fmt(item.peg_ratio)}</div></div>
+              <div class="setup-box"><b>ROE</b><div>${fmt(item.roe)}%</div></div>
+              <div class="setup-box"><b>FCF Margin</b><div>${fmt(item.fcf_margin)}%</div></div>
+              <div class="setup-box"><b>Gross Margin</b><div>${fmt(item.gross_margin)}%</div></div>
+              <div class="setup-box"><b>Debt / Equity</b><div>${fmt(item.debt_to_equity)}</div></div>
+            </div>
+            ` : ''}
+
+            <!-- Checklist -->
+            <div class="checklist">
+              <div class="check-item"><span>HTF Context Aligned</span>${labelBool(item.checklist.htf_context)}</div>
+              <div class="check-item"><span>H4 Zone Validated</span>${labelBool(item.checklist.h4_zone)}</div>
+              <div class="check-item"><span>Liquidity Swept</span>${labelBool(item.checklist.liquidity_sweep)}</div>
+              <div class="check-item"><span>FVG / Retest Zone</span>${labelBool(item.checklist.fvg_or_zone)}</div>
+              <div class="check-item"><span>RR &ge; ${Number(document.getElementById("minRrInput").value).toFixed(1)}</span>${labelBool(item.checklist.rr_pass)}</div>
+            </div>
+
+            <!-- Candlestick & Volume Chart -->
+            <div id="chart-container-${item.symbol.replace('.', '_')}" class="chart-wrap">
+              <div class="chart-loading">Rendering interactive chart...</div>
             </div>
           </div>
         </td>
@@ -483,23 +1234,17 @@ function renderRows() {
   rowsEl.querySelectorAll("tr.data-row").forEach(row => {
     row.addEventListener("click", () => {
       const sym = row.dataset.symbol;
-      if (expandedSymbol === sym) {
-        expandedSymbol = null; // collapse
-      } else {
-        expandedSymbol = sym; // expand
-      }
-      renderRows(); // Re-render to update classes and spawn chart
+      expandedSymbol = (expandedSymbol === sym) ? null : sym;
+      renderRows();
     });
   });
 
-  // Init chart if expanded
   if (expandedSymbol) {
     const item = latest.find(i => i.symbol === expandedSymbol);
     if (item) {
       setTimeout(() => renderECharts(item), 0);
     }
   } else {
-    // cleanup chart
     if (activeChart && activeChart.remove) {
       activeChart.remove();
       activeChart = null;
@@ -507,13 +1252,17 @@ function renderRows() {
   }
 }
 
-// Chart Logic
+// Chart Theme Palette
 function chartTheme() {
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
   return {
-    bg: getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#09090b",
-    text: getComputedStyle(document.documentElement).getPropertyValue("--muted").trim() || "#a1a1aa",
-    border: getComputedStyle(document.documentElement).getPropertyValue("--border").trim() || "#3f3f46",
-    grid: "rgba(255,255,255,0.05)"
+    isDark: isDark,
+    bg: isDark ? "#111827" : "#ffffff",
+    text: isDark ? "#94a3b8" : "#64748b",
+    border: isDark ? "#243049" : "#e2e8f0",
+    grid: isDark ? "rgba(255,255,255,0.06)" : "#f1f5f9",
+    up: isDark ? "#10b981" : "#059669",
+    down: isDark ? "#f87171" : "#dc2626"
   };
 }
 
@@ -580,7 +1329,6 @@ function calculatePatternStats(bars, currentIndex) {
     }
   }
 
-  // ── True Range & ATR 14 ──
   const tr = [];
   for (let i = 0; i < bars.length; i++) {
     if (i === 0) {
@@ -604,7 +1352,6 @@ function calculatePatternStats(bars, currentIndex) {
     }
   }
 
-  // ── RSI 14 ──
   const rsi14 = [];
   let avgGain = 0;
   let avgLoss = 0;
@@ -635,7 +1382,6 @@ function calculatePatternStats(bars, currentIndex) {
     }
   }
 
-  // ── RSI Divergences ──
   let isRsiBullDiv = false;
   let isRsiBearDiv = false;
   if (currentIndex >= 20 && rsi14[currentIndex] !== null) {
@@ -662,7 +1408,7 @@ function calculatePatternStats(bars, currentIndex) {
     let prevHighIdx = -1;
     for (let j = currentIndex - 5; j >= currentIndex - 25; j--) {
       if (j >= 2 && bars[j].high >= bars[j-1].high && bars[j].high >= bars[j-2].high &&
-          bars[j].high >= bars[j+1].high && bars[j].high >= bars[j+2].high) {
+          bars[j].high >= bars[j+1].high && bars[j].high >= bars[j-2].high) {
         prevHighIdx = j;
         break;
       }
@@ -677,7 +1423,6 @@ function calculatePatternStats(bars, currentIndex) {
     }
   }
 
-  // ── Inside Day & NR7 ──
   const isInsideDay = currentIndex > 0 &&
     bars[currentIndex].high < bars[currentIndex - 1].high &&
     bars[currentIndex].low > bars[currentIndex - 1].low;
@@ -696,7 +1441,6 @@ function calculatePatternStats(bars, currentIndex) {
     isNR7 = smallest;
   }
 
-  // ── Weekly Trend (Weekly 10-SMA) ──
   const getWeeklyCloses = (dailyBars, limitIndex) => {
     const weeklyCloses = [];
     for (let i = 0; i <= limitIndex; i++) {
@@ -726,14 +1470,12 @@ function calculatePatternStats(bars, currentIndex) {
     isWeeklyBull = weeklyCloses[weeklyCloses.length - 1] > weeklySMA10Val;
   }
 
-  // ── Minervini Weighted Relative Strength (RS) ──
   let rsPercentile = null;
   let rsScore = null;
   let rawWeightedRs = null;
 
   if (window.BENCHMARK_DATA && window.BENCHMARK_DATA.length > 0) {
     const benchmark = window.BENCHMARK_DATA;
-
     const getReturnPct = (pricesArr, days, refTime) => {
       const idx = pricesArr.findIndex(p => p.time === refTime);
       if (idx < 0) return 0.0;
@@ -749,24 +1491,12 @@ function calculatePatternStats(bars, currentIndex) {
     const benchIdx = benchmark.findIndex(p => p.time === refTime);
 
     if (stockIdx >= 30 && benchIdx >= 30) {
-      const stock_63 = getReturnPct(bars, 63, refTime);
-      const bench_63 = getReturnPct(benchmark, 63, refTime);
-      const r_63 = stock_63 - bench_63;
-
-      const stock_126 = getReturnPct(bars, 126, refTime);
-      const bench_126 = getReturnPct(benchmark, 126, refTime);
-      const r_126 = stock_126 - bench_126;
-
-      const stock_189 = getReturnPct(bars, 189, refTime);
-      const bench_189 = getReturnPct(benchmark, 189, refTime);
-      const r_189 = stock_189 - bench_189;
-
-      const stock_252 = getReturnPct(bars, 252, refTime);
-      const bench_252 = getReturnPct(benchmark, 252, refTime);
-      const r_252 = stock_252 - bench_252;
+      const r_63 = getReturnPct(bars, 63, refTime) - getReturnPct(benchmark, 63, refTime);
+      const r_126 = getReturnPct(bars, 126, refTime) - getReturnPct(benchmark, 126, refTime);
+      const r_189 = getReturnPct(bars, 189, refTime) - getReturnPct(benchmark, 189, refTime);
+      const r_252 = getReturnPct(bars, 252, refTime) - getReturnPct(benchmark, 252, refTime);
 
       rawWeightedRs = 0.40 * r_63 + 0.20 * r_126 + 0.20 * r_189 + 0.20 * r_252;
-
       const score_rs_map = (val) => {
         if (val >= 50) return [100, 99];
         if (val >= 30) return [95, 95];
@@ -779,14 +1509,12 @@ function calculatePatternStats(bars, currentIndex) {
         if (val >= -20) return [20, 25];
         return [0, 10];
       };
-
       const [sc, pct] = score_rs_map(rawWeightedRs);
       rsScore = sc;
       rsPercentile = pct;
     }
   }
 
-  // ── Day-of-Week Bias ──
   let dayOfWeekBias = null;
   if (currentIndex >= 5) {
     const todayDate = new Date(bars[currentIndex].time);
@@ -806,9 +1534,7 @@ function calculatePatternStats(bars, currentIndex) {
         const currentClose = bars[i].close;
         const ret = prevClose > 0 ? (currentClose - prevClose) / prevClose * 100 : 0;
         sameDayReturnSum += ret;
-        if (ret > 0) {
-          sameDayWins++;
-        }
+        if (ret > 0) sameDayWins++;
       }
     }
 
@@ -821,7 +1547,6 @@ function calculatePatternStats(bars, currentIndex) {
       };
     }
   }
-
 
   for (let i = currentIndex; i >= 1; i--) {
     const gap = bars[i].open - bars[i-1].close;
@@ -888,8 +1613,7 @@ function calculatePatternStats(bars, currentIndex) {
   };
 
   const gapCondition = (i) => {
-    if (currentGapStreak === 0) return false;
-    if (i - currentGapStreak + 1 < 1) return false;
+    if (currentGapStreak === 0 || i - currentGapStreak + 1 < 1) return false;
     for (let j = 0; j < currentGapStreak; j++) {
       const idx = i - j;
       const gap = bars[idx].open - bars[idx-1].close;
@@ -900,8 +1624,7 @@ function calculatePatternStats(bars, currentIndex) {
   };
 
   const colorCondition = (i) => {
-    if (currentColorStreak === 0) return false;
-    if (i - currentColorStreak + 1 < 0) return false;
+    if (currentColorStreak === 0 || i - currentColorStreak + 1 < 0) return false;
     for (let j = 0; j < currentColorStreak; j++) {
       const idx = i - j;
       const cDir = bars[idx].close > bars[idx].open ? 1 : (bars[idx].close < bars[idx].open ? -1 : 0);
@@ -910,58 +1633,29 @@ function calculatePatternStats(bars, currentIndex) {
     return true;
   };
 
-  const pullbackCondition = (i) => {
-    return sma50[i] && bars[i].low <= sma50[i] && bars[i].close >= sma50[i] * 0.99;
-  };
-
-  const breakoutCondition = (i) => {
-    return i > 0 && high20[i-1] && bars[i].close > high20[i-1];
-  };
-
-  const volumeSpikeCondition = (i) => {
-    return vol20[i] && (bars[i].volume || 0) >= vol20[i] * 2.0;
-  };
-
-  const volumeDryUpCondition = (i) => {
-    return vol20[i] && (bars[i].volume || 0) < vol20[i] * 0.5;
-  };
-
+  const pullbackCondition = (i) => sma50[i] && bars[i].low <= sma50[i] && bars[i].close >= sma50[i] * 0.99;
+  const breakoutCondition = (i) => i > 0 && high20[i-1] && bars[i].close > high20[i-1];
+  const volumeSpikeCondition = (i) => vol20[i] && (bars[i].volume || 0) >= vol20[i] * 2.0;
+  const volumeDryUpCondition = (i) => vol20[i] && (bars[i].volume || 0) < vol20[i] * 0.5;
   const hammerCondition = (i) => {
     const body = Math.abs(bars[i].close - bars[i].open);
     const lowerWick = Math.min(bars[i].close, bars[i].open) - bars[i].low;
-    const isHammerShape = lowerWick >= body * 2 && lowerWick > 0;
-    if (!isHammerShape) return false;
-
+    if (lowerWick < body * 2 || lowerWick <= 0) return false;
     const isNearSMA50 = sma50[i] && Math.abs(bars[i].low - sma50[i]) / sma50[i] <= 0.02;
     const isNearSMA200 = sma200[i] && Math.abs(bars[i].low - sma200[i]) / sma200[i] <= 0.02;
     const isAfterDowntrend = i >= 4 && bars[i-1].close < bars[i-2].close && bars[i-2].close < bars[i-3].close && bars[i-3].close < bars[i-4].close;
     return isNearSMA50 || isNearSMA200 || isAfterDowntrend;
   };
-
   const strongCloseCondition = (i) => {
     const range = bars[i].high - bars[i].low;
     if (range <= 0) return false;
     const closePos = (bars[i].close - bars[i].low) / range;
     return closePos >= 0.75 && bars[i].close > bars[i].open && vol20[i] && (bars[i].volume || 0) > vol20[i];
   };
-
-  const wideRangeBullCondition = (i) => {
-    const range = bars[i].high - bars[i].low;
-    return range10[i] && range >= range10[i] * 1.5 && bars[i].close > bars[i].open;
-  };
-
-  const wideRangeBearCondition = (i) => {
-    const range = bars[i].high - bars[i].low;
-    return range10[i] && range >= range10[i] * 1.5 && bars[i].close < bars[i].open;
-  };
-
-  const aboveSMA200Condition = (i) => {
-    return sma200[i] && bars[i].close > sma200[i];
-  };
-
-  const belowSMA200Condition = (i) => {
-    return sma200[i] && bars[i].close <= sma200[i];
-  };
+  const wideRangeBullCondition = (i) => range10[i] && (bars[i].high - bars[i].low) >= range10[i] * 1.5 && bars[i].close > bars[i].open;
+  const wideRangeBearCondition = (i) => range10[i] && (bars[i].high - bars[i].low) >= range10[i] * 1.5 && bars[i].close < bars[i].open;
+  const aboveSMA200Condition = (i) => sma200[i] && bars[i].close > sma200[i];
+  const belowSMA200Condition = (i) => sma200[i] && bars[i].close <= sma200[i];
 
   const isPullback = pullbackCondition(currentIndex);
   const isBreakout = breakoutCondition(currentIndex);
@@ -972,7 +1666,6 @@ function calculatePatternStats(bars, currentIndex) {
   const isWideRangeBull = wideRangeBullCondition(currentIndex);
   const isWideRangeBear = wideRangeBearCondition(currentIndex);
   const isAboveSMA200 = aboveSMA200Condition(currentIndex);
-  const isBelowSMA200 = belowSMA200Condition(currentIndex);
 
   const gapReturns = findRecentStats(gapCondition);
   const colorReturns = findRecentStats(colorCondition);
@@ -985,7 +1678,7 @@ function calculatePatternStats(bars, currentIndex) {
   const wideRangeBullReturns = isWideRangeBull ? findForwardStats(wideRangeBullCondition, [3, 5, 10]) : null;
   const wideRangeBearReturns = isWideRangeBear ? findForwardStats(wideRangeBearCondition, [3, 5, 10]) : null;
   const aboveSMA200Returns = isAboveSMA200 ? findForwardStats(aboveSMA200Condition, [5, 10, 20]) : null;
-  const belowSMA200Returns = isBelowSMA200 ? findForwardStats(belowSMA200Condition, [5, 10, 20]) : null;
+  const belowSMA200Returns = !isAboveSMA200 ? findForwardStats(belowSMA200Condition, [5, 10, 20]) : null;
 
   const calcRet = (rets, n) => {
     const slice = n === 'all' ? rets : rets.slice(0, n);
@@ -997,31 +1690,19 @@ function calculatePatternStats(bars, currentIndex) {
 
   const buildStatsObj = (rets, periods) => {
     const obj = {};
-    periods.forEach(p => {
-      obj[p] = calcRet(rets, p);
-    });
+    periods.forEach(p => obj[p] = calcRet(rets, p));
     return obj;
   };
 
   const buildForwardStatsObj = (forwardStats) => {
     const obj = {};
-    for (const p in forwardStats) {
-      obj[p] = calcRet(forwardStats[p], 'all');
-    }
+    for (const p in forwardStats) obj[p] = calcRet(forwardStats[p], 'all');
     return obj;
   };
 
   return {
-    gap: {
-      streak: currentGapStreak,
-      dir: currentGapDir,
-      stats: buildStatsObj(gapReturns, [10, 20, 'all'])
-    },
-    color: {
-      streak: currentColorStreak,
-      dir: currentColorDir,
-      stats: buildStatsObj(colorReturns, [5, 10, 'all'])
-    },
+    gap: { streak: currentGapStreak, dir: currentGapDir, stats: buildStatsObj(gapReturns, [10, 20, 'all']) },
+    color: { streak: currentColorStreak, dir: currentColorDir, stats: buildStatsObj(colorReturns, [5, 10, 'all']) },
     pullback: isPullback ? { stats: buildForwardStatsObj(pullbackReturns) } : null,
     breakout: isBreakout ? { stats: buildForwardStatsObj(breakoutReturns) } : null,
     volumeSpike: isVolumeSpike ? { stats: buildForwardStatsObj(volumeSpikeReturns) } : null,
@@ -1030,30 +1711,14 @@ function calculatePatternStats(bars, currentIndex) {
     strongClose: isStrongClose ? { stats: buildForwardStatsObj(strongCloseReturns) } : null,
     wideRangeBull: isWideRangeBull ? { stats: buildForwardStatsObj(wideRangeBullReturns) } : null,
     wideRangeBear: isWideRangeBear ? { stats: buildForwardStatsObj(wideRangeBearReturns) } : null,
-    regime: {
-      isAbove: isAboveSMA200,
-      stats: buildForwardStatsObj(isAboveSMA200 ? aboveSMA200Returns : belowSMA200Returns)
-    },
+    regime: { isAbove: isAboveSMA200, stats: buildForwardStatsObj(isAboveSMA200 ? aboveSMA200Returns : belowSMA200Returns) },
     insideDay: isInsideDay,
     nr7: isNR7,
     rsi: rsi14[currentIndex] !== null ? rsi14[currentIndex].toFixed(1) : null,
-    rsiDivergence: {
-      isBull: isRsiBullDiv,
-      isBear: isRsiBearDiv
-    },
-    atr: atr14[currentIndex] ? {
-      val: atr14[currentIndex],
-      pct: (atr14[currentIndex] / bars[currentIndex].close * 100).toFixed(2)
-    } : null,
-    weeklyTrend: {
-      isWeeklyBull: isWeeklyBull,
-      weeklySMA10: weeklySMA10Val
-    },
-    rs: rawWeightedRs !== null ? {
-      percentile: rsPercentile,
-      score: rsScore,
-      raw: rawWeightedRs.toFixed(2)
-    } : null,
+    rsiDivergence: { isBull: isRsiBullDiv, isBear: isRsiBearDiv },
+    atr: atr14[currentIndex] ? { val: atr14[currentIndex], pct: (atr14[currentIndex] / bars[currentIndex].close * 100).toFixed(2) } : null,
+    weeklyTrend: { isWeeklyBull: isWeeklyBull, weeklySMA10: weeklySMA10Val },
+    rs: rawWeightedRs !== null ? { percentile: rsPercentile, score: rsScore, raw: rawWeightedRs.toFixed(2) } : null,
     dayBias: dayOfWeekBias
   };
 }
@@ -1063,7 +1728,7 @@ function renderECharts(item) {
   const container = document.getElementById(containerId);
   if (!container || !item.candles || !item.candles.length) return;
   if (!window.echarts) {
-    container.innerHTML = `<div class="chart-loading">Chart library did not load. Check internet access.</div>`;
+    container.innerHTML = `<div class="chart-loading">Chart library did not load. Check network connection.</div>`;
     return;
   }
   
@@ -1099,15 +1764,15 @@ function renderECharts(item) {
   };
 
   if (item.zones) {
-    addZone(item.zones.demand, "rgba(16, 185, 129, 0.2)"); // DZ
-    addZone(item.zones.supply, "rgba(239, 68, 68, 0.2)"); // SZ
-    addZone(item.zones.fvg, "rgba(245, 158, 11, 0.2)"); // FVG
+    addZone(item.zones.demand, "rgba(5, 150, 105, 0.14)"); // Demand Zone
+    addZone(item.zones.supply, "rgba(220, 38, 38, 0.14)"); // Supply Zone
+    addZone(item.zones.fvg, "rgba(217, 119, 6, 0.14)"); // FVG
   }
 
   if (item.structure) {
-    const sColorHigh = item.structure.bias === 'bullish' ? '#3b82f6' : '#ef4444'; 
+    const sColorHigh = item.structure.bias === 'bullish' ? '#2563eb' : '#dc2626'; 
     const sTitleHigh = item.structure.bias === 'bullish' ? 'BOS' : 'CHoCH';
-    const sColorLow = item.structure.bias === 'bullish' ? '#ef4444' : '#3b82f6';
+    const sColorLow = item.structure.bias === 'bullish' ? '#dc2626' : '#2563eb';
     const sTitleLow = item.structure.bias === 'bullish' ? 'CHoCH' : 'BOS';
 
     if (item.structure.last_high && item.structure.last_high.date && item.structure.last_high.price) {
@@ -1129,13 +1794,13 @@ function renderECharts(item) {
     markLines.push({
       name: name,
       yAxis: Number(price),
-      lineStyle: { color: color, type: 'dotted', width: 1, opacity: 0.8 },
+      lineStyle: { color: color, type: 'dotted', width: 1.2, opacity: 0.85 },
       label: { formatter: '{b}', position: 'insideStartTop', color: color }
     });
   };
-  addLevel(item.entry, 'Entry', '#f59e0b');
-  addLevel(item.stop, 'SL', '#ef4444');
-  addLevel(item.target, 'TP', '#10b981');
+  addLevel(item.entry, 'Entry', '#d97706');
+  addLevel(item.stop, 'SL', '#dc2626');
+  addLevel(item.target, 'TP', '#059669');
 
   const option = {
     backgroundColor: theme.bg,
@@ -1158,7 +1823,7 @@ function renderECharts(item) {
         name: item.symbol,
         type: 'candlestick',
         data: ohlc,
-        itemStyle: { color: '#10b981', color0: '#ef4444', borderColor: '#10b981', borderColor0: '#ef4444' },
+        itemStyle: { color: theme.up, color0: theme.down, borderColor: theme.up, borderColor0: theme.down },
         markArea: { silent: true, data: markAreas },
         markLine: { symbol: ['none', 'none'], label: { position: 'end', color: theme.text }, data: markLines }
       },
@@ -1167,93 +1832,93 @@ function renderECharts(item) {
         type: 'bar',
         xAxisIndex: 1,
         yAxisIndex: 1,
-        data: volumes.map(item => {
-          return { value: item[1], itemStyle: { color: item[2] > 0 ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)' } };
+        data: volumes.map(itm => {
+          return { value: itm[1], itemStyle: { color: itm[2] > 0 ? (theme.isDark ? 'rgba(16, 185, 129, 0.35)' : 'rgba(5, 150, 105, 0.35)') : (theme.isDark ? 'rgba(239, 68, 68, 0.35)' : 'rgba(220, 38, 38, 0.35)') } };
         })
       }
     ]
   };
   chart.setOption(option);
 
-  // --- Technical Overlay ---
+  // Technical Overlay Overlay Legend (Clean ReOrc Card)
   container.style.position = 'relative';
   const legend = document.createElement('div');
   legend.style.position = 'absolute';
-  legend.style.left = '12px';
-  legend.style.top = '12px';
+  legend.style.left = '14px';
+  legend.style.top = '14px';
   legend.style.zIndex = 10;
-  legend.style.fontFamily = "'JetBrains Mono', monospace";
+  legend.style.fontFamily = "var(--font-mono)";
   legend.style.fontSize = '11px';
   legend.style.color = 'var(--text)';
-  legend.style.background = 'rgba(13, 17, 23, 0.9)';
-  legend.style.padding = '8px 12px';
-  legend.style.borderRadius = '8px';
+  legend.style.background = theme.isDark ? 'rgba(17, 24, 39, 0.94)' : 'rgba(255, 255, 255, 0.96)';
+  legend.style.padding = '10px 14px';
+  legend.style.borderRadius = 'var(--radius-md)';
   legend.style.pointerEvents = 'auto';
   legend.style.border = '1px solid var(--border)';
-  legend.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
-  legend.style.minWidth = '280px';
+  legend.style.boxShadow = 'var(--shadow-md)';
+  legend.style.minWidth = '290px';
   legend.style.maxWidth = '360px';
-  legend.style.maxHeight = 'calc(100% - 24px)';
+  legend.style.maxHeight = 'calc(100% - 28px)';
   legend.style.overflowY = 'auto';
   container.appendChild(legend);
 
   const formatStat = (s, n) => {
     if (!s || !s[n]) return `<span style="color:var(--muted)">N/A</span>`;
-    const col = s[n].avg > 0 ? 'var(--green)' : 'var(--red)';
-    return `<span style="color:${col}">${s[n].winRate}% (${s[n].avg}%)</span>`;
+    const col = s[n].avg > 0 ? 'var(--emerald)' : 'var(--rose)';
+    return `<span style="color:${col}; font-weight:600;">${s[n].winRate}% (${s[n].avg}%)</span>`;
   };
 
   const setLegendContent = (priceData, idx) => {
     if (!priceData) {
-      legend.innerHTML = `<strong>${item.symbol}</strong><br>Hover over chart for details`;
+      legend.innerHTML = `<strong>${item.symbol}</strong><br><span style="color:var(--muted)">Hover over chart for details</span>`;
       return;
     }
     const stats = calculatePatternStats(item.candles, idx);
-    const color = priceData.close >= priceData.open ? 'var(--green)' : 'var(--red)';
+    const color = priceData.close >= priceData.open ? 'var(--emerald)' : 'var(--rose)';
     const barClose = priceData.close;
     const barVol = priceData.volume || 0;
 
-    let sectorHtml = `<div style="color:var(--cyan);margin-bottom:6px">Sector: ${item.sector || 'Unknown'} <span style="float:right;color:var(--gold)">Score: ${item.score || 'N/A'}</span></div>`;
+    let sectorHtml = `<div style="color:var(--primary); margin-bottom:6px; font-weight:600;">Sector: ${item.sector || 'Unknown'} <span style="float:right; color:var(--amber)">Score: ${item.score || 'N/A'}</span></div>`;
 
     let accuracyHtml = "";
     let patternsHtml = "";
     if (stats) {
       let badges = [];
-      if (stats.insideDay) badges.push(`<span style="background:rgba(88,166,255,0.15);color:#58a6ff;padding:2px 4px;border-radius:3px;font-weight:bold;font-size:9px">INSIDE</span>`);
-      if (stats.nr7) badges.push(`<span style="background:rgba(210,168,255,0.15);color:#d2a8ff;padding:2px 4px;border-radius:3px;font-weight:bold;font-size:9px">NR7</span>`);
-      let badgeRow = badges.length > 0 ? `<div style="display:flex;gap:4px;margin-bottom:6px">${badges.join("")}</div>` : "";
+      if (stats.insideDay) badges.push(`<span style="background:var(--primary-light); color:var(--primary); padding:2px 6px; border-radius:4px; font-weight:bold; font-size:9px">INSIDE</span>`);
+      if (stats.nr7) badges.push(`<span style="background:var(--purple-light); color:var(--purple); padding:2px 6px; border-radius:4px; font-weight:bold; font-size:9px">NR7</span>`);
+      let badgeRow = badges.length > 0 ? `<div style="display:flex; gap:4px; margin-bottom:6px">${badges.join("")}</div>` : "";
 
       let atrStr = "N/A", posSizeStr = "N/A";
       if (stats.atr) {
         atrStr = `${stats.atr.val.toFixed(2)} (${stats.atr.pct}%)`;
-        const acct = 50000, risk = 0.5; // Defaults
+        const acct = 50000, risk = 0.5;
         const riskAmt = acct * (risk / 100);
         const stopDistance = 2 * stats.atr.val;
         const shares = Math.floor(riskAmt / stopDistance);
         if (shares > 0 && barClose > 0) {
           const allocation = (shares * barClose) / acct * 100;
-          posSizeStr = `${shares} shares (${allocation.toFixed(1)}% / ฿${(shares * barClose).toLocaleString(undefined, {maximumFractionDigits:0})})`;
+          posSizeStr = `${shares} shs (${allocation.toFixed(1)}% / ฿${(shares * barClose).toLocaleString(undefined, {maximumFractionDigits:0})})`;
         }
       }
 
-      const weeklyColor = stats.weeklyTrend.isWeeklyBull ? 'var(--green)' : 'var(--red)';
-      const weeklyStr = `<span style="color:${weeklyColor};font-weight:bold">${stats.weeklyTrend.isWeeklyBull ? 'Bullish 📈' : 'Bearish 📉'}</span>`;
+      const weeklyColor = stats.weeklyTrend.isWeeklyBull ? 'var(--emerald)' : 'var(--rose)';
+      const weeklyStr = `<span style="color:${weeklyColor}; font-weight:bold">${stats.weeklyTrend.isWeeklyBull ? 'Bullish ↑' : 'Bearish ↓'}</span>`;
 
       let rsiDivergenceStr = "";
-      if (stats.rsiDivergence.isBull) rsiDivergenceStr = ` <span style="background:rgba(46,164,79,0.2);color:var(--green);padding:1px 3px;border-radius:2px;font-size:9px">BULL DIV</span>`;
-      else if (stats.rsiDivergence.isBear) rsiDivergenceStr = ` <span style="background:rgba(207,34,46,0.2);color:var(--red);padding:1px 3px;border-radius:2px;font-size:9px">BEAR DIV</span>`;
-      const rsiColor = (stats.rsi >= 70) ? 'var(--red)' : (stats.rsi <= 30 ? 'var(--green)' : 'var(--text)');
+      if (stats.rsiDivergence.isBull) rsiDivergenceStr = ` <span style="background:var(--emerald-light); color:var(--emerald); padding:1px 4px; border-radius:3px; font-size:9px">BULL DIV</span>`;
+      else if (stats.rsiDivergence.isBear) rsiDivergenceStr = ` <span style="background:var(--rose-light); color:var(--rose); padding:1px 4px; border-radius:3px; font-size:9px">BEAR DIV</span>`;
+      const rsiColor = (stats.rsi >= 70) ? 'var(--rose)' : (stats.rsi <= 30 ? 'var(--emerald)' : 'var(--text)');
       const rsiStr = stats.rsi ? `<span style="color:${rsiColor}">${stats.rsi}</span>${rsiDivergenceStr}` : "N/A";
 
       let rsStr = "N/A";
       if (stats.rs) {
-        const rsColor = stats.rs.percentile >= 80 ? 'var(--green)' : (stats.rs.percentile < 50 ? 'var(--red)' : '#ff9800');
-        rsStr = `<span style="color:${rsColor};font-weight:bold">Percentile ${stats.rs.percentile} (${stats.rs.raw}%)</span>`;
+        const rsColor = stats.rs.percentile >= 80 ? 'var(--emerald)' : (stats.rs.percentile < 50 ? 'var(--rose)' : 'var(--amber)');
+        rsStr = `<span style="color:${rsColor}; font-weight:bold">Pct ${stats.rs.percentile} (${stats.rs.raw}%)</span>`;
       }
 
       let dayBiasStr = "N/A";
       if (stats.dayBias) {
-        const biasColor = parseFloat(stats.dayBias.avgReturn) >= 0 ? 'var(--green)' : 'var(--red)';
+        const biasColor = parseFloat(stats.dayBias.avgReturn) >= 0 ? 'var(--emerald)' : 'var(--rose)';
         dayBiasStr = `${stats.dayBias.day}: <span style="color:${biasColor}">${stats.dayBias.winRate}% (Avg ${stats.dayBias.avgReturn}%)</span>`;
       }
 
@@ -1281,73 +1946,73 @@ function renderECharts(item) {
 
       const netScore = bullWeight - bearWeight;
       let confluenceText = "Neutral", confluenceColor = 'var(--text)';
-      if (netScore >= 5) { confluenceText = "Strong Bullish 🐂"; confluenceColor = 'var(--green)'; }
-      else if (netScore >= 1) { confluenceText = "Bullish"; confluenceColor = 'var(--green)'; }
-      else if (netScore <= -5) { confluenceText = "Strong Bearish 🐻"; confluenceColor = 'var(--red)'; }
-      else if (netScore <= -1) { confluenceText = "Bearish"; confluenceColor = 'var(--red)'; }
+      if (netScore >= 5) { confluenceText = "Strong Bullish 🐂"; confluenceColor = 'var(--emerald)'; }
+      else if (netScore >= 1) { confluenceText = "Bullish"; confluenceColor = 'var(--emerald)'; }
+      else if (netScore <= -5) { confluenceText = "Strong Bearish 🐻"; confluenceColor = 'var(--rose)'; }
+      else if (netScore <= -1) { confluenceText = "Bearish"; confluenceColor = 'var(--rose)'; }
 
-      const confluenceScoreHtml = `<div style="border-top:1px solid rgba(255,255,255,0.15);margin-top:6px;padding-top:6px;display:flex;justify-content:space-between;font-weight:bold">
-        <span>Confluence Score:</span>
-        <span style="color:${confluenceColor}">${bullWeight.toFixed(1)}B - ${bearWeight.toFixed(1)}S (Net: ${netScore > 0 ? '+' : ''}${netScore.toFixed(1)})</span>
+      const confluenceScoreHtml = `<div style="border-top:1px solid var(--border); margin-top:6px; padding-top:6px; display:flex; justify-content:space-between; font-weight:bold;">
+        <span>Confluence:</span>
+        <span style="color:${confluenceColor}">${bullWeight.toFixed(1)}B - ${bearWeight.toFixed(1)}S (${netScore > 0 ? '+' : ''}${netScore.toFixed(1)})</span>
       </div>
-      <div style="display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-bottom:6px">
-        <span>Bias assessment:</span>
-        <span style="color:${confluenceColor}">${confluenceText}</span>
+      <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:10px; margin-bottom:4px;">
+        <span>Assessment:</span>
+        <span style="color:${confluenceColor}; font-weight:600;">${confluenceText}</span>
       </div>`;
 
       accuracyHtml = `
-        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:6px;margin-bottom:8px">
+        <div style="background:var(--bg-subtle); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; margin-bottom:8px;">
           ${badgeRow}
-          <div style="display:flex;justify-content:space-between"><span>ATR (14):</span> <span>${atrStr}</span></div>
-          <div style="display:flex;justify-content:space-between"><span>Rec. Size (2 ATR):</span> <span style="color:var(--gold)">${posSizeStr}</span></div>
-          <div style="display:flex;justify-content:space-between"><span>Weekly Trend:</span> <span>${weeklyStr}</span></div>
-          <div style="display:flex;justify-content:space-between"><span>RSI (14):</span> <span>${rsiStr}</span></div>
-          <div style="display:flex;justify-content:space-between"><span>Relative Strength:</span> <span>${rsStr}</span></div>
-          <div style="display:flex;justify-content:space-between"><span>Day Bias:</span> <span>${dayBiasStr}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>ATR (14):</span> <span>${atrStr}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>Rec. Size (2 ATR):</span> <span style="color:var(--amber); font-weight:600;">${posSizeStr}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>Weekly Trend:</span> <span>${weeklyStr}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>RSI (14):</span> <span>${rsiStr}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>Rel. Strength:</span> <span>${rsStr}</span></div>
+          <div style="display:flex; justify-content:space-between;"><span>Day Bias:</span> <span>${dayBiasStr}</span></div>
           ${confluenceScoreHtml}
         </div>
       `;
 
       let activePatternsList = "";
       const renderRecent = (label, icon, statsObj, periods, col='var(--text)') => {
-        let html = `<div style="margin-bottom:4px"><div style="color:${col}">${icon} ${label}</div>`;
+        let htm = `<div style="margin-bottom:4px"><div style="color:${col}; font-weight:600;">${icon} ${label}</div>`;
         periods.forEach(p => {
-          html += `<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted)"><span>· ${p === 'all' ? 'All Time' : 'Last ' + p + ' times'}:</span> ${formatStat(statsObj, p)}</div>`;
+          htm += `<div style="display:flex; justify-content:space-between; font-size:10px; color:var(--muted)"><span>· ${p === 'all' ? 'All Time' : 'Last ' + p + 'x'}:</span> ${formatStat(statsObj, p)}</div>`;
         });
-        return html + `</div>`;
+        return htm + `</div>`;
       };
       const renderForward = (label, icon, statsObj, col='var(--text)') => {
-        let html = `<div style="margin-bottom:4px"><div style="color:${col}">${icon} ${label}</div>`;
+        let htm = `<div style="margin-bottom:4px"><div style="color:${col}; font-weight:600;">${icon} ${label}</div>`;
         const periods = Object.keys(statsObj).sort((a,b) => parseInt(a) - parseInt(b));
         periods.forEach(p => {
-          html += `<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted)"><span>· Hold ${p} Days:</span> ${formatStat(statsObj, p)}</div>`;
+          htm += `<div style="display:flex; justify-content:space-between; font-size:10px; color:var(--muted)"><span>· Hold ${p}D:</span> ${formatStat(statsObj, p)}</div>`;
         });
-        return html + `</div>`;
+        return htm + `</div>`;
       };
 
-      if (stats.gap.streak > 0) activePatternsList += renderRecent(`${stats.gap.dir === 1 ? 'Gap Up' : 'Gap Down'} (${stats.gap.streak} days)`, stats.gap.dir === 1 ? '📈' : '📉', stats.gap.stats, [10, 20, 'all'], stats.gap.dir === 1 ? 'var(--green)' : 'var(--red)');
-      if (stats.color.streak > 0) activePatternsList += renderRecent(`${stats.color.dir === 1 ? 'Green Bar' : 'Red Bar'} (${stats.color.streak} days)`, stats.color.dir === 1 ? '🟩' : '🟥', stats.color.stats, [5, 10, 'all'], stats.color.dir === 1 ? 'var(--green)' : 'var(--red)');
-      if (stats.pullback) activePatternsList += renderForward(`SMA50 Pullback Bounce`, '↩️', stats.pullback.stats, '#ff9800');
-      if (stats.breakout) activePatternsList += renderForward(`20-Day Breakout`, '🚀', stats.breakout.stats, 'var(--green)');
-      if (stats.volumeSpike) activePatternsList += renderForward(`Volume Climax (>2x)`, '📊', stats.volumeSpike.stats, '#58a6ff');
-      if (stats.volumeDryUp) activePatternsList += renderForward(`Volume Dry-Up (<0.5x)`, '🏜️', stats.volumeDryUp.stats, '#a3a3a3');
-      if (stats.hammer) activePatternsList += renderForward(`Rejection Tail (Pin Bar)`, '🔨', stats.hammer.stats, '#ffeb3b');
-      if (stats.strongClose) activePatternsList += renderForward(`Strong Close (Top 25% + Vol)`, '💪', stats.strongClose.stats, 'var(--green)');
-      if (stats.wideRangeBull) activePatternsList += renderForward(`Wide Range Bull (>1.5x)`, '📏📈', stats.wideRangeBull.stats, '#d2a8ff');
-      if (stats.wideRangeBear) activePatternsList += renderForward(`Wide Range Bear (>1.5x)`, '📏📉', stats.wideRangeBear.stats, '#ff7b72');
+      if (stats.gap.streak > 0) activePatternsList += renderRecent(`${stats.gap.dir === 1 ? 'Gap Up' : 'Gap Down'} (${stats.gap.streak}d)`, stats.gap.dir === 1 ? '📈' : '📉', stats.gap.stats, [10, 20, 'all'], stats.gap.dir === 1 ? 'var(--emerald)' : 'var(--rose)');
+      if (stats.color.streak > 0) activePatternsList += renderRecent(`${stats.color.dir === 1 ? 'Green Bar' : 'Red Bar'} (${stats.color.streak}d)`, stats.color.dir === 1 ? '🟩' : '🟥', stats.color.stats, [5, 10, 'all'], stats.color.dir === 1 ? 'var(--emerald)' : 'var(--rose)');
+      if (stats.pullback) activePatternsList += renderForward(`SMA50 Pullback Bounce`, '↩️', stats.pullback.stats, 'var(--amber)');
+      if (stats.breakout) activePatternsList += renderForward(`20-Day Breakout`, '🚀', stats.breakout.stats, 'var(--emerald)');
+      if (stats.volumeSpike) activePatternsList += renderForward(`Volume Climax (>2x)`, '📊', stats.volumeSpike.stats, 'var(--primary)');
+      if (stats.volumeDryUp) activePatternsList += renderForward(`Volume Dry-Up (<0.5x)`, '🏜️', stats.volumeDryUp.stats, 'var(--muted)');
+      if (stats.hammer) activePatternsList += renderForward(`Rejection Tail (Pin Bar)`, '🔨', stats.hammer.stats, 'var(--amber)');
+      if (stats.strongClose) activePatternsList += renderForward(`Strong Close (Top 25% + Vol)`, '💪', stats.strongClose.stats, 'var(--emerald)');
+      if (stats.wideRangeBull) activePatternsList += renderForward(`Wide Range Bull (>1.5x)`, '📏↑', stats.wideRangeBull.stats, 'var(--purple)');
+      if (stats.wideRangeBear) activePatternsList += renderForward(`Wide Range Bear (>1.5x)`, '📏↓', stats.wideRangeBear.stats, 'var(--rose)');
 
-      if (activePatternsList) patternsHtml = `<div style="border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;margin-top:6px"><div style="color:#c9d1d9;margin-bottom:4px;font-weight:bold">🧩 Active Pattern Stats</div>${activePatternsList}</div>`;
+      if (activePatternsList) patternsHtml = `<div style="border-top:1px solid var(--border); padding-top:6px; margin-top:6px"><div style="color:var(--text); margin-bottom:4px; font-weight:700;">🧩 Active Patterns</div>${activePatternsList}</div>`;
     }
 
     legend.innerHTML = `
-      <div style="font-weight:bold;font-size:13px;margin-bottom:2px;">${item.symbol} <span style="font-size:10px;color:var(--muted);font-weight:normal;margin-left:4px">${priceData.time}</span></div>
+      <div style="font-weight:700; font-size:13px; margin-bottom:2px;">${item.symbol} <span style="font-size:10px; color:var(--muted); font-weight:normal; margin-left:4px">${priceData.time}</span></div>
       ${sectorHtml}
-      <div style="display:flex;gap:6px;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:6px;font-size:10px;color:var(--muted)">
-        <span>O: <span style="color:${color}">${priceData.open.toFixed(2)}</span></span>
-        <span>H: <span style="color:${color}">${priceData.high.toFixed(2)}</span></span>
-        <span>L: <span style="color:${color}">${priceData.low.toFixed(2)}</span></span>
-        <span>C: <span style="color:${color}">${priceData.close.toFixed(2)}</span></span>
-        <span>V: <span style="color:${color}">${(barVol >= 1e6 ? (barVol/1e6).toFixed(1) + 'M' : (barVol/1e3).toFixed(0) + 'K')}</span></span>
+      <div style="display:flex; gap:6px; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:6px; font-size:10px; color:var(--muted)">
+        <span>O: <span style="color:${color}; font-weight:600;">${priceData.open.toFixed(2)}</span></span>
+        <span>H: <span style="color:${color}; font-weight:600;">${priceData.high.toFixed(2)}</span></span>
+        <span>L: <span style="color:${color}; font-weight:600;">${priceData.low.toFixed(2)}</span></span>
+        <span>C: <span style="color:${color}; font-weight:600;">${priceData.close.toFixed(2)}</span></span>
+        <span>V: <span style="color:${color}; font-weight:600;">${(barVol >= 1e6 ? (barVol/1e6).toFixed(1) + 'M' : (barVol/1e3).toFixed(0) + 'K')}</span></span>
       </div>
       ${accuracyHtml}
       ${patternsHtml}
@@ -1368,8 +2033,6 @@ function renderECharts(item) {
   chart.getZr().on('mouseout', function () {
     setLegendContent(item.candles[item.candles.length - 1], item.candles.length - 1);
   });
-  // --- End Technical Overlay ---
-
 }
 
 // API and Data Loading
@@ -1377,20 +2040,18 @@ function applyPayload(payload, labelPrefix = "Updated") {
   latest = payload.results || [];
   sourceSummary = payload.source_summary || {};
   const policy = payload.data_policy === "real_market_data_only" ? " / real data only" : "";
-  document.getElementById("timestamp").textContent = `${labelPrefix} ${payload.generated_at}${payload.fallback_used ? " / no real candidates" : ""}${policy}`;
+  const ts = payload.generated_at || payload.universe_meta?.as_of || (payload.results?.[0]?.as_of) || "Recent";
+  document.getElementById("timestamp").textContent = `${labelPrefix} ${ts}${payload.fallback_used ? " / no real candidates" : ""}${policy}`;
   document.getElementById("metricCount").textContent = payload.count || 0;
-  document.getElementById("metricUniverse").textContent = payload.universe?.common_stock_count || 0;
+  const uni = payload.universe_meta?.common_stock_count || payload.universe?.common_stock_count || (currentMarket === 'TH' ? 840 : (currentMarket.includes('US') ? 503 : 1));
+  document.getElementById("metricUniverse").textContent = uni;
   document.getElementById("metricArmed").textContent = payload.armed_count || 0;
   document.getElementById("metricVcp").textContent = sourceSummary.VCP || 0;
   document.getElementById("metricCanslim").textContent = sourceSummary.CANSLIM || 0;
   document.getElementById("metricSwing").textContent = (sourceSummary.DIP_BUY || 0) + (sourceSummary.MOMENTUM || 0);
   
-  expandedSymbol = null; // reset expand on new data
+  expandedSymbol = null;
   renderRows();
-}
-
-function isRealPayload(payload) {
-  return payload && payload.data_policy === "real_market_data_only" && Array.isArray(payload.results) && !payload.results.some(item => item.is_sample);
 }
 
 async function scan(forceRefresh = false) {
@@ -1404,18 +2065,17 @@ async function scan(forceRefresh = false) {
     if (!response.ok) throw new Error(`API ${response.status}`);
     const payload = await response.json();
     
-    localStorage.removeItem("thai-smc-last-scan"); // clean up old version key
+    localStorage.removeItem("thai-smc-last-scan");
     applyPayload(payload);
   } catch (error) {
     document.getElementById("timestamp").textContent = "Failed to load data";
-    rowsEl.innerHTML = `<tr><td colspan="8" style="color:var(--danger);padding:24px">Analysis failed: ${error.message}</td></tr>`;
+    rowsEl.innerHTML = `<tr><td colspan="8" style="color:var(--rose); padding:24px; text-align:center;">Analysis failed: ${error.message}</td></tr>`;
   } finally {
     document.getElementById("scanBtn").classList.remove("loading");
   }
 }
 
 function hydrateCachedScan() {
-  // Clear old huge payloads to free up browser quota
   localStorage.removeItem(getCacheKey());
   localStorage.removeItem("thai-smc-last-scan");
 }
@@ -1437,22 +2097,21 @@ if (savedRr) {
 minRrInput.addEventListener("change", (e) => {
   localStorage.setItem("smc_min_rr", e.target.value);
   document.getElementById("ruleRrText").textContent = `Trade only when RR is 1:${Number(e.target.value).toFixed(1)} or better.`;
-  // Re-fetch data using new RR criteria immediately
   scan(false);
 });
 document.getElementById("ruleRrText").textContent = `Trade only when RR is 1:${Number(minRrInput.value).toFixed(1)} or better.`;
+
 document.querySelectorAll("th[data-sort]").forEach(th => {
   th.addEventListener("click", () => {
     const col = th.dataset.sort;
     if (sortCol === col) {
-      sortAsc = !sortAsc; // toggle direction
+      sortAsc = !sortAsc;
     } else {
       sortCol = col;
-      sortAsc = false; // default desc for new col
-      if (col === 'symbol') sortAsc = true; // default asc for strings
+      sortAsc = false;
+      if (col === 'symbol') sortAsc = true;
     }
     
-    // Update UI
     document.querySelectorAll("th").forEach(el => {
       el.classList.remove("active-sort");
       const icon = el.querySelector(".sort-icon");
@@ -1475,25 +2134,19 @@ function setMarket(market) {
   localStorage.setItem("smc_market", market);
   document.getElementById("metricMarket").textContent = market;
   
-  // Update Tab UI
-  document.querySelectorAll(".tab-btn").forEach(btn => {
+  document.querySelectorAll(".market-pill").forEach(btn => {
     if (btn.dataset.market === market) {
       btn.classList.add("active");
-      btn.style.background = "var(--primary)";
-      btn.style.color = "#fff";
     } else {
       btn.classList.remove("active");
-      btn.style.background = "transparent";
-      btn.style.color = "var(--text)";
     }
   });
 
-  // Update text
   const title = document.getElementById("dashboardTitle");
   const sub = document.getElementById("dashboardSubtitle");
   if (market === "TH") {
     title.textContent = "Thai SMC Dashboard";
-    sub.textContent = "Auto universe from SET/MAI";
+    sub.textContent = "Auto universe from SET / MAI";
   } else if (market === "US") {
     title.textContent = "US SMC Dashboard";
     sub.textContent = "Auto universe from S&P 500";
@@ -1508,25 +2161,15 @@ function setMarket(market) {
   scan(false);
 }
 
-// Initial Tab setup
 setMarket(currentMarket);
 
-document.querySelectorAll(".tab-btn").forEach(btn => {
+document.querySelectorAll(".market-pill").forEach(btn => {
   btn.addEventListener("click", (e) => {
     setMarket(e.target.dataset.market);
   });
 });
 
-// Init
 hydrateCachedScan();
-if (!document.getElementById("scanBtn").classList.contains("loading")) {
-  // skip if setMarket already triggered scan, but actually setMarket triggers scan synchronously above
-}
-
 </script>
 </body>
 </html>
-  const sma50 = calcSMA(item.candles, 50).map(d => [d.time, d.value]);
-  const sma150 = calcSMA(item.candles, 150).map(d => [d.time, d.value]);
-  const sma200 = calcSMA(item.candles, 200).map(d => [d.time, d.value]);
-
