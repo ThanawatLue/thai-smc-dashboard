@@ -1118,7 +1118,7 @@ tr.detail-row.open {
 
       <!-- Free-Form Input Box -->
       <div style="position:relative; margin-bottom:12px;">
-        <textarea id="xrayInputText" rows="2" placeholder="ใส่รายชื่อสินทรัพย์พร้อมสัดส่วน เช่น VOO 35% QQQM 20% SCHD 15% GLD 10% TLT 10% BTC 10% หรือใส่ชื่อหุ้นเดี่ยว เช่น NVDA" style="width:100%; border:1px solid var(--border); background:var(--surface); color:var(--text); padding:12px 16px; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:0.9rem; resize:vertical; outline:none; transition:border-color 0.2s;"></textarea>
+        <textarea id="xrayInputText" rows="3" placeholder="ใส่รายชื่อสินทรัพย์พร้อมสัดส่วน เช่น VOO 35% QQQM 20% SCHD 15% GLD 10% TLT 10% BTC 10% หรือใส่ชื่อหุ้นเดี่ยว เช่น NVDA" style="width:100%; min-height:85px; border:1px solid var(--border); background:var(--surface); color:var(--text); padding:12px 16px; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:0.9rem; resize:vertical; outline:none; transition:border-color 0.2s;"></textarea>
       </div>
 
       <!-- Example Clickable Pills & Action Buttons Row -->
@@ -2344,6 +2344,7 @@ function setXraySample(text) {
   const input = document.getElementById("xrayInputText");
   input.value = text;
   input.focus();
+  runXrayAnalysis();
 }
 
 async function runXrayAnalysis() {
@@ -2359,7 +2360,24 @@ async function runXrayAnalysis() {
 
   const btn = document.getElementById("btnXrayRun");
   btn.classList.add("loading");
+  btn.disabled = true;
   btn.innerHTML = `<span>⏳ กำลังประมวลผล...</span>`;
+
+  // Immediately clear old result and show active processing banner
+  document.getElementById("xrayPlaceholder").style.display = "none";
+  const container = document.getElementById("xrayDynamicContent");
+  container.style.display = "flex";
+  container.innerHTML = `
+    <div class="card-box" style="padding:48px 24px; text-align:center; background:var(--surface); border:1px solid var(--border);">
+      <div style="font-size:2.2rem; margin-bottom:12px; animation: pulse 1.4s infinite ease-in-out;">⚡</div>
+      <h3 style="font-family:var(--font-display); font-size:1.2rem; font-weight:700; color:var(--text); margin-bottom:6px;">
+        กำลังวิเคราะห์ข้อมูลตลาดสดล่าสุด...
+      </h3>
+      <p style="font-size:0.85rem; color:var(--muted); max-width:480px; margin:0 auto; line-height:1.5;">
+        ระบบกำลังดาวน์โหลดราคาจริง (Yahoo Finance / SEC Data), วิเคราะห์ Look-Through ETF, และประมวลผลเชิงปริมาณ
+      </p>
+    </div>
+  `;
 
   try {
     const res = await fetch("/api/xray/analyze", {
@@ -2374,10 +2392,6 @@ async function runXrayAnalysis() {
     });
     const data = await res.json();
     lastXrayPayload = data;
-
-    document.getElementById("xrayPlaceholder").style.display = "none";
-    const container = document.getElementById("xrayDynamicContent");
-    container.style.display = "flex";
 
     if (data.error && !data.data) {
       container.innerHTML = `
@@ -2396,6 +2410,7 @@ async function runXrayAnalysis() {
     alert("Analysis failed: " + err.message);
   } finally {
     btn.classList.remove("loading");
+    btn.disabled = false;
     btn.innerHTML = `<span>⚡ วิเคราะห์ (Analyze)</span>`;
   }
 }
@@ -2561,6 +2576,23 @@ document.getElementById("btnXrayRun").addEventListener("click", runXrayAnalysis)
 document.getElementById("btnXrayExport").addEventListener("click", exportXrayHtml);
 document.getElementById("btnXrayCopyText").addEventListener("click", copyXrayTextSummary);
 
+// Auto re-run on changing Horizon, Currency, or Size if analysis was already run
+document.getElementById("xrayPeriod")?.addEventListener("change", () => {
+  if (lastXrayPayload) runXrayAnalysis();
+});
+document.getElementById("xrayCurrency")?.addEventListener("change", () => {
+  if (lastXrayPayload) runXrayAnalysis();
+});
+document.getElementById("xrayPortVal")?.addEventListener("change", () => {
+  if (lastXrayPayload) runXrayAnalysis();
+});
+document.getElementById("xrayInputText")?.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+    e.preventDefault();
+    runXrayAnalysis();
+  }
+});
+
 function renderXrayPortfolio(payload) {
   const container = document.getElementById("xrayDynamicContent");
   const portStats = payload.risk_return?.portfolio || {};
@@ -2588,7 +2620,7 @@ function renderXrayPortfolio(payload) {
     <div class="xray-kpi-grid">
       <div class="xray-kpi-card">
         <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted); letter-spacing:0.04em;">Annualized Return (CAGR)</div>
-        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:${(portStats.cagr_pct || 0) >= 0 ? 'var(--emerald)' : 'var(--rose)'};">
+        <div style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; letter-spacing:-0.02em; margin:4px 0; color:${(portStats.cagr_pct || 0) >= 0 ? 'var(--emerald)' : 'var(--rose)'};">
           ${(portStats.cagr_pct || 0) >= 0 ? '+' : ''}${(portStats.cagr_pct || 0).toFixed(2)}%
         </div>
         <div style="font-size:0.75rem; color:var(--muted);">S&P 500 (VOO): ${(benchStats.cagr_pct || 0) >= 0 ? '+' : ''}${(benchStats.cagr_pct || 0).toFixed(2)}%</div>
@@ -2596,7 +2628,7 @@ function renderXrayPortfolio(payload) {
 
       <div class="xray-kpi-card">
         <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted); letter-spacing:0.04em;">Max Drawdown (สถิติลดลงสูงสุด)</div>
-        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--rose);">
+        <div style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; letter-spacing:-0.02em; margin:4px 0; color:var(--rose);">
           ${(portStats.max_drawdown_pct || 0).toFixed(2)}%
         </div>
         <div style="font-size:0.75rem; color:var(--rose); font-weight:600;">เงินลดลงจริงสูงสุด: -${(portStats.real_cash_loss || 0).toLocaleString()} ${currency}</div>
@@ -2604,16 +2636,16 @@ function renderXrayPortfolio(payload) {
 
       <div class="xray-kpi-card">
         <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted); letter-spacing:0.04em;">Risk-Adjusted (Sharpe / Sortino)</div>
-        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--text);">
-          ${(portStats.sharpe_ratio || 0).toFixed(2)} <span style="font-size:1rem; font-weight:600; color:var(--muted);">/ ${(portStats.sortino_ratio || 0).toFixed(2)}</span>
+        <div style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; letter-spacing:-0.02em; margin:4px 0; color:var(--text);">
+          ${(portStats.sharpe_ratio || 0).toFixed(2)} <span style="font-size:1.05rem; font-weight:600; color:var(--muted);">/ ${(portStats.sortino_ratio || 0).toFixed(2)}</span>
         </div>
         <div style="font-size:0.75rem; color:var(--muted);">Calmar Ratio: ${(portStats.calmar_ratio || 0).toFixed(2)}</div>
       </div>
 
       <div class="xray-kpi-card">
         <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted); letter-spacing:0.04em;">Concentration (Effective Bets)</div>
-        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--text);">
-          ${conc.effective_positions || 'N/A'} <span style="font-size:0.9rem; font-weight:500; color:var(--muted);">Bets</span>
+        <div style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; letter-spacing:-0.02em; margin:4px 0; color:var(--text);">
+          ${conc.effective_positions || 'N/A'} <span style="font-size:0.95rem; font-weight:600; color:var(--muted);">Bets</span>
         </div>
         <div style="font-size:0.75rem; color:var(--muted);">${conc.verdict || ''}</div>
       </div>
@@ -3008,7 +3040,7 @@ function renderXrayThesis(payload) {
     <div class="xray-kpi-grid">
       <div class="xray-kpi-card">
         <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">Market Implied FCF Growth</div>
-        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--primary);">
+        <div style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; letter-spacing:-0.02em; margin:4px 0; color:var(--primary);">
           ${dcf.implied_fcf_growth_pct !== undefined ? dcf.implied_fcf_growth_pct + '%' : 'N/A'}
         </div>
         <div style="font-size:0.75rem; color:var(--muted);">10-Yr FCF CAGR to justify price</div>
@@ -3016,23 +3048,23 @@ function renderXrayThesis(payload) {
 
       <div class="xray-kpi-card">
         <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">Trailing / Forward P/E</div>
-        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--text);">
-          ${mult.trailing_pe || 'N/A'} <span style="font-size:1rem; font-weight:600; color:var(--muted);">/ ${mult.forward_pe || 'N/A'}</span>
+        <div style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; letter-spacing:-0.02em; margin:4px 0; color:var(--text);">
+          ${mult.trailing_pe || 'N/A'} <span style="font-size:1.05rem; font-weight:600; color:var(--muted);">/ ${mult.forward_pe || 'N/A'}</span>
         </div>
         <div style="font-size:0.75rem; color:var(--muted);">EV/EBITDA: ${mult.ev_to_ebitda || 'N/A'}</div>
       </div>
 
       <div class="xray-kpi-card">
         <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">Gross / Operating Margin</div>
-        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--text);">
-          ${(fin.gross_margin_pct || 0).toFixed(1)}% <span style="font-size:1rem; font-weight:600; color:var(--muted);">/ ${(fin.operating_margin_pct || 0).toFixed(1)}%</span>
+        <div style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; letter-spacing:-0.02em; margin:4px 0; color:var(--text);">
+          ${(fin.gross_margin_pct || 0).toFixed(1)}% <span style="font-size:1.05rem; font-weight:600; color:var(--muted);">/ ${(fin.operating_margin_pct || 0).toFixed(1)}%</span>
         </div>
         <div style="font-size:0.75rem; color:var(--muted);">FCF Margin: ${(fin.fcf_margin_pct || 0).toFixed(1)}%</div>
       </div>
 
       <div class="xray-kpi-card">
         <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">ROE / Capital Efficiency</div>
-        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--emerald);">
+        <div style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; letter-spacing:-0.02em; margin:4px 0; color:var(--emerald);">
           ${(fin.roe_pct || 0).toFixed(1)}%
         </div>
         <div style="font-size:0.75rem; color:var(--muted);">Net Debt/Equity: ${(fin.debt_to_equity || 0).toFixed(2)}</div>
