@@ -2,6 +2,9 @@
 
 Standalone dashboard for Thai-market Smart Money Concept research.
 
+- **Live Production URL:** [https://thai-smc-dashboard.onrender.com/](https://thai-smc-dashboard.onrender.com/)
+- **UI Design System:** ReOrc-inspired Editorial FinTech Theme (Dual Light/Dark support)
+
 ## Scope
 
 - Runs independently from `tong_trading`.
