@@ -157,5 +157,71 @@ def api_sources():
     return jsonify(clean_nan(collect_candidate_sources(market=market)))
 
 
+@app.post("/api/xray/analyze")
+def api_xray_analyze():
+    from portfolio_xray import analyze as xray_analyze
+    body = request.get_json(silent=True) or {}
+    raw_input = body.get("input", "").strip()
+    if not raw_input:
+        return jsonify({"error": "Missing input string"}), 400
+
+    try:
+        portfolio_val = float(body.get("portfolio_value", 1_000_000))
+    except (ValueError, TypeError):
+        portfolio_val = 1_000_000.0
+
+    currency = str(body.get("currency", "THB")).upper()
+    period = str(body.get("period", "3y"))
+    benchmark = str(body.get("benchmark", "VOO")).upper()
+
+    try:
+        result = xray_analyze(
+            raw_input=raw_input,
+            portfolio_value=portfolio_val,
+            currency=currency,
+            period=period,
+            benchmark_symbol=benchmark,
+        )
+        return jsonify(clean_nan(result))
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.post("/api/xray/export-html")
+def api_xray_export_html():
+    from portfolio_xray import analyze as xray_analyze
+    body = request.get_json(silent=True) or {}
+    raw_input = body.get("input", "").strip()
+    if not raw_input:
+        return "Missing input string", 400
+
+    try:
+        portfolio_val = float(body.get("portfolio_value", 1_000_000))
+    except (ValueError, TypeError):
+        portfolio_val = 1_000_000.0
+
+    currency = str(body.get("currency", "THB")).upper()
+    period = str(body.get("period", "3y"))
+    benchmark = str(body.get("benchmark", "VOO")).upper()
+
+    try:
+        result = xray_analyze(
+            raw_input=raw_input,
+            portfolio_value=portfolio_val,
+            currency=currency,
+            period=period,
+            benchmark_symbol=benchmark,
+        )
+        html_content = result.get("html_report", "<!DOCTYPE html><html><body>No report generated</body></html>")
+        mode = result.get("mode", "portfolio")
+        return html_content, 200, {
+            "Content-Type": "text/html; charset=utf-8",
+            "Content-Disposition": f"attachment; filename=xray_report_{mode}.html"
+        }
+    except Exception as e:
+        return f"Error generating HTML report: {e}", 500
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5080)
+

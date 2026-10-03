@@ -828,6 +828,57 @@ tr.detail-row.open {
   .header-actions { justify-content: space-between; }
   .chart-wrap { height: 480px; }
 }
+
+/* X-Ray Pro Styling */
+.xray-pill-sample {
+  border: 1px solid var(--border);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  padding: 4px 10px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.xray-pill-sample:hover {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+.xray-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.xray-kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.xray-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+@media (max-width: 900px) {
+  .xray-grid-2 { grid-template-columns: 1fr; }
+}
+.xray-callout {
+  background: var(--bg-subtle);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+}
 </style>
 </head>
 <body>
@@ -849,6 +900,9 @@ tr.detail-row.open {
       <button id="tabUS" class="market-pill" data-market="US">🇺🇸 S&P 500</button>
       <button id="tabUS_MEDIUM_TERM" class="market-pill" data-market="US_MEDIUM_TERM">📊 US M.Term</button>
       <button id="tabGOLD" class="market-pill" data-market="GOLD">🪙 Gold (GC=F)</button>
+      <button id="tabXRAY" class="market-pill" data-market="XRAY" style="display:inline-flex; align-items:center; gap:6px;">
+        <span style="color:var(--emerald);">⚡</span> AI Portfolio X-Ray
+      </button>
     </div>
 
     <!-- Header Actions -->
@@ -881,6 +935,9 @@ tr.detail-row.open {
 
 <!-- Main Container -->
 <main class="main-wrapper">
+
+  <!-- SMC Scanner View Container -->
+  <div id="smcScannerView" style="display:flex; flex-direction:column; gap:20px; width:100%;">
 
   <!-- Hero Stats Section (ReOrc Divided Cards) -->
   <section class="hero-section" aria-label="Overview statistics">
@@ -1023,6 +1080,82 @@ tr.detail-row.open {
     </section>
 
   </div>
+  </div> <!-- /smcScannerView -->
+
+  <!-- X-Ray & Deep Thesis Container View -->
+  <div id="xrayContainerView" style="display:none; width: 100%; flex-direction: column; gap: 20px;">
+    <!-- Control Bar -->
+    <div class="card-box" style="padding: 24px; background: var(--surface-card);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div class="stat-badge emerald" style="margin-bottom:6px;">⚡ AI PORTFOLIO X-RAY PRO & DEEP THESIS</div>
+          <h2 style="font-family:var(--font-display); font-size:1.4rem; font-weight:800; color:var(--text); letter-spacing:-0.02em;">
+            Institutional Portfolio X-Ray & Reverse DCF
+          </h2>
+          <p style="font-size:0.82rem; color:var(--muted); margin-top:2px;">
+            Look-Through ETF Holdings, Overlap Redundancy, Drawdown ในเงินจริง, และ Reverse DCF Implied Growth
+          </p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:6px; background:var(--bg-subtle); padding:6px 12px; border-radius:var(--radius-md); border:1px solid var(--border);">
+            <span style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Size:</span>
+            <input type="number" id="xrayPortVal" value="1000000" step="50000" style="width:110px; height:30px; font-family:var(--font-mono); font-weight:700; border:none; background:transparent; padding:0 4px; color:var(--text);">
+            <select id="xrayCurrency" style="height:30px; border:none; background:transparent; font-family:var(--font-mono); font-weight:700; cursor:pointer; color:var(--text);">
+              <option value="THB">THB (฿)</option>
+              <option value="USD">USD ($)</option>
+            </select>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; background:var(--bg-subtle); padding:6px 12px; border-radius:var(--radius-md); border:1px solid var(--border);">
+            <span style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Horizon:</span>
+            <select id="xrayPeriod" style="height:30px; border:none; background:transparent; font-family:var(--font-mono); font-weight:700; cursor:pointer; color:var(--text);">
+              <option value="3y" selected>3 Years</option>
+              <option value="1y">1 Year</option>
+              <option value="5y">5 Years</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Free-Form Input Box -->
+      <div style="position:relative; margin-bottom:12px;">
+        <textarea id="xrayInputText" rows="2" placeholder="ใส่รายชื่อสินทรัพย์พร้อมสัดส่วน เช่น VOO 35% QQQM 20% SCHD 15% GLD 10% TLT 10% BTC 10% หรือใส่ชื่อหุ้นเดี่ยว เช่น NVDA" style="width:100%; border:1px solid var(--border); background:var(--surface); color:var(--text); padding:12px 16px; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:0.9rem; resize:vertical; outline:none; transition:border-color 0.2s;"></textarea>
+      </div>
+
+      <!-- Example Clickable Pills & Action Buttons Row -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+          <span style="font-size:0.75rem; color:var(--muted); font-weight:600;">ตัวอย่าง:</span>
+          <button type="button" class="xray-pill-sample" onclick="setXraySample('VOO 35% QQQM 20% SCHD 15% GLD 10% TLT 10% BTC 10%')">All-Weather (6 Assets)</button>
+          <button type="button" class="xray-pill-sample" onclick="setXraySample('VOO QQQM SCHD GLD TLT BTC')">Equal Weight</button>
+          <button type="button" class="xray-pill-sample" onclick="setXraySample('VOO 60% SCHD 40%')">Core + Dividend</button>
+          <button type="button" class="xray-pill-sample" onclick="setXraySample('NVDA')">NVDA Thesis</button>
+          <button type="button" class="xray-pill-sample" onclick="setXraySample('RKLB')">RKLB Thesis</button>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button id="btnXrayRun" type="button" class="btn-pill-primary" style="height:36px; padding:0 20px;">
+            <span>⚡ วิเคราะห์ (Analyze)</span>
+          </button>
+          <button id="btnXrayExport" type="button" class="btn-pill-secondary" style="height:36px; padding:0 16px;" title="Export Standalone HTML Report">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>HTML Export</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="xrayResultArea">
+      <!-- Placeholder before analysis -->
+      <div id="xrayPlaceholder" class="card-box" style="padding:60px 24px; text-align:center; color:var(--muted);">
+        <div style="font-size:2.4rem; margin-bottom:12px;">📊</div>
+        <div style="font-family:var(--font-display); font-size:1.15rem; font-weight:700; color:var(--text); margin-bottom:6px;">พร้อมสำหรับการวิเคราะห์พอร์ตหรือหุ้นเดี่ยว</div>
+        <div style="font-size:0.85rem; max-width:540px; margin:0 auto; line-height:1.6;">เลือกตัวอย่างด้านบน หรือพิมพ์ Ticker ที่คุณต้องการ จากนั้นกด <strong>วิเคราะห์ (Analyze)</strong> ระบบจะคำนวณ Look-Through Exposure, Overlap, Risk & Return, Drawdown ในเงินจริง หรือ Reverse DCF ให้อัตโนมัติ</div>
+      </div>
+
+      <!-- Active Analysis Content (Dynamically injected) -->
+      <div id="xrayDynamicContent" style="display:none; flex-direction:column; gap:20px;"></div>
+    </div>
+  </div> <!-- /xrayContainerView -->
 </main>
 
 <script>
@@ -1034,6 +1167,14 @@ const rowsEl = document.getElementById("rows");
 let latest = [];
 let sourceSummary = {};
 let activeChart = null;
+
+// Global State Variables
+let currentMarket = localStorage.getItem("smc_market") || "TH";
+let lastXrayPayload = null;
+let xrayWealthChart = null;
+let xrayHoldingsChart = null;
+let xrayDrawdownChart = null;
+
 const getCacheKey = () => `smc-last-scan-${currentMarket}-${document.getElementById("minRrInput").value}`;
 
 // Table Sorting & Expanded State
@@ -1059,6 +1200,10 @@ function applyTheme(theme) {
   if (activeChart && expandedSymbol) {
     const item = latest.find(i => i.symbol === expandedSymbol);
     if (item) renderECharts(item);
+  }
+  if (typeof lastXrayPayload !== 'undefined' && lastXrayPayload) {
+    if (lastXrayPayload.mode === 'portfolio') renderXrayPortfolio(lastXrayPayload);
+    else renderXrayThesis(lastXrayPayload);
   }
 }
 
@@ -2126,7 +2271,6 @@ document.querySelectorAll("th[data-sort]").forEach(th => {
 });
 
 // Market Tabs Logic
-let currentMarket = localStorage.getItem("smc_market") || "TH";
 document.getElementById("metricMarket").textContent = currentMarket;
 
 function setMarket(market) {
@@ -2144,6 +2288,26 @@ function setMarket(market) {
 
   const title = document.getElementById("dashboardTitle");
   const sub = document.getElementById("dashboardSubtitle");
+  const smcView = document.getElementById("smcScannerView");
+  const xrayView = document.getElementById("xrayContainerView");
+  const scanBtn = document.getElementById("scanBtn");
+  const refreshBtn = document.getElementById("refreshBtn");
+
+  if (market === "XRAY") {
+    smcView.style.display = "none";
+    xrayView.style.display = "flex";
+    scanBtn.style.display = "none";
+    refreshBtn.style.display = "none";
+    title.textContent = "AI Portfolio X-Ray Pro";
+    sub.textContent = "Look-Through ETF Holdings, Overlap Matrix, Drawdown ในเงินจริง, & Deep Thesis";
+    return;
+  } else {
+    smcView.style.display = "flex";
+    xrayView.style.display = "none";
+    scanBtn.style.display = "";
+    refreshBtn.style.display = "";
+  }
+
   if (market === "TH") {
     title.textContent = "Thai SMC Dashboard";
     sub.textContent = "Auto universe from SET / MAI";
@@ -2165,11 +2329,527 @@ setMarket(currentMarket);
 
 document.querySelectorAll(".market-pill").forEach(btn => {
   btn.addEventListener("click", (e) => {
-    setMarket(e.target.dataset.market);
+    setMarket(e.target.closest("button").dataset.market);
   });
 });
 
+// ─────────────────────────────────────────────────────────────
+// AI PORTFOLIO X-RAY PRO CLIENT ENGINE
+// ─────────────────────────────────────────────────────────────
+function setXraySample(text) {
+  const input = document.getElementById("xrayInputText");
+  input.value = text;
+  input.focus();
+}
+
+async function runXrayAnalysis() {
+  const rawInput = document.getElementById("xrayInputText").value.trim();
+  if (!rawInput) {
+    alert("กรุณากรอก Ticker หรือ Portfolio ก่อนกดวิเคราะห์");
+    return;
+  }
+
+  const portVal = parseFloat(document.getElementById("xrayPortVal").value) || 1000000;
+  const currency = document.getElementById("xrayCurrency").value || "THB";
+  const period = document.getElementById("xrayPeriod").value || "3y";
+
+  const btn = document.getElementById("btnXrayRun");
+  btn.classList.add("loading");
+  btn.innerHTML = `<span>⏳ กำลังประมวลผล...</span>`;
+
+  try {
+    const res = await fetch("/api/xray/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        input: rawInput,
+        portfolio_value: portVal,
+        currency: currency,
+        period: period,
+      })
+    });
+    const data = await res.json();
+    lastXrayPayload = data;
+
+    document.getElementById("xrayPlaceholder").style.display = "none";
+    const container = document.getElementById("xrayDynamicContent");
+    container.style.display = "flex";
+
+    if (data.error && !data.data) {
+      container.innerHTML = `
+        <div class="xray-callout" style="border-left-color:var(--rose-dark); background:var(--rose-light); color:var(--rose-dark);">
+          <strong>ข้อผิดพลาด:</strong> ${data.error}
+        </div>`;
+      return;
+    }
+
+    if (data.mode === "single_stock") {
+      renderXrayThesis(data);
+    } else {
+      renderXrayPortfolio(data);
+    }
+  } catch (err) {
+    alert("Analysis failed: " + err.message);
+  } finally {
+    btn.classList.remove("loading");
+    btn.innerHTML = `<span>⚡ วิเคราะห์ (Analyze)</span>`;
+  }
+}
+
+async function exportXrayHtml() {
+  const rawInput = document.getElementById("xrayInputText").value.trim();
+  if (!rawInput) {
+    alert("กรุณากรอก Ticker ก่อน Export HTML");
+    return;
+  }
+  const portVal = parseFloat(document.getElementById("xrayPortVal").value) || 1000000;
+  const currency = document.getElementById("xrayCurrency").value || "THB";
+  const period = document.getElementById("xrayPeriod").value || "3y";
+
+  const btn = document.getElementById("btnXrayExport");
+  btn.classList.add("loading");
+
+  try {
+    const res = await fetch("/api/xray/export-html", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        input: rawInput,
+        portfolio_value: portVal,
+        currency: currency,
+        period: period,
+      })
+    });
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `portfolio_xray_${new Date().toISOString().slice(0,10)}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    alert("Export failed: " + err.message);
+  } finally {
+    btn.classList.remove("loading");
+  }
+}
+
+document.getElementById("btnXrayRun").addEventListener("click", runXrayAnalysis);
+document.getElementById("btnXrayExport").addEventListener("click", exportXrayHtml);
+
+function renderXrayPortfolio(payload) {
+  const container = document.getElementById("xrayDynamicContent");
+  const portStats = payload.risk_return?.portfolio || {};
+  const benchStats = payload.risk_return?.benchmark || {};
+  const conc = payload.concentration || {};
+  const lookThrough = payload.look_through || {};
+  const overlap = payload.overlap || {};
+  const corr = payload.risk_return?.correlation || {};
+  const portVal = payload.risk_return?.portfolio_value || 1000000;
+  const currency = payload.risk_return?.currency || "THB";
+  const theme = chartTheme();
+
+  let html = "";
+
+  // Equal Weight Warning Banner
+  if (payload.equal_weight_warning) {
+    html += `
+      <div class="xray-callout" style="border-left-color:var(--amber-dark); background:var(--amber-light); color:#92400e;">
+        <strong>⚠️ คำเตือน:</strong> ${payload.equal_weight_warning}
+      </div>`;
+  }
+
+  // 4 Top KPI Cards
+  html += `
+    <div class="xray-kpi-grid">
+      <div class="xray-kpi-card">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted); letter-spacing:0.04em;">Annualized Return (CAGR)</div>
+        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:${(portStats.cagr_pct || 0) >= 0 ? 'var(--emerald)' : 'var(--rose)'};">
+          ${(portStats.cagr_pct || 0) >= 0 ? '+' : ''}${(portStats.cagr_pct || 0).toFixed(2)}%
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted);">S&P 500 (VOO): ${(benchStats.cagr_pct || 0) >= 0 ? '+' : ''}${(benchStats.cagr_pct || 0).toFixed(2)}%</div>
+      </div>
+
+      <div class="xray-kpi-card">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted); letter-spacing:0.04em;">Max Drawdown (สถิติลดลงสูงสุด)</div>
+        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--rose);">
+          ${(portStats.max_drawdown_pct || 0).toFixed(2)}%
+        </div>
+        <div style="font-size:0.75rem; color:var(--rose); font-weight:600;">เงินลดลงจริงสูงสุด: -${(portStats.real_cash_loss || 0).toLocaleString()} ${currency}</div>
+      </div>
+
+      <div class="xray-kpi-card">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted); letter-spacing:0.04em;">Risk-Adjusted (Sharpe / Sortino)</div>
+        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--text);">
+          ${(portStats.sharpe_ratio || 0).toFixed(2)} <span style="font-size:1rem; font-weight:600; color:var(--muted);">/ ${(portStats.sortino_ratio || 0).toFixed(2)}</span>
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted);">Calmar Ratio: ${(portStats.calmar_ratio || 0).toFixed(2)}</div>
+      </div>
+
+      <div class="xray-kpi-card">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted); letter-spacing:0.04em;">Concentration (Effective Bets)</div>
+        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--text);">
+          ${conc.effective_positions || 'N/A'} <span style="font-size:0.9rem; font-weight:500; color:var(--muted);">Bets</span>
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted);">${conc.verdict || ''}</div>
+      </div>
+    </div>
+  `;
+
+  // Two Column Charts: Wealth Index & Look-Through Holdings
+  html += `
+    <div class="xray-grid-2">
+      <div class="card-box" style="padding:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text);">Cumulative Wealth Index (vs S&P 500)</h3>
+          <span style="font-size:0.72rem; color:var(--muted); font-family:var(--font-mono);">Base 1.0</span>
+        </div>
+        <div id="xrayWealthChart" style="height:300px; width:100%;"></div>
+      </div>
+
+      <div class="card-box" style="padding:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text);">Look-Through Top Effective Holdings</h3>
+          <span style="font-size:0.72rem; color:var(--muted); font-family:var(--font-mono);">Aggregate Exposure %</span>
+        </div>
+        <div id="xrayHoldingsChart" style="height:300px; width:100%;"></div>
+      </div>
+    </div>
+  `;
+
+  // Stated Allocation Table
+  html += `
+    <div class="card-box" style="padding:20px;">
+      <div style="margin-bottom:14px;">
+        <h3 style="font-family:var(--font-display); font-size:1.05rem; font-weight:700; color:var(--text);">Stated Asset Allocation & Roles</h3>
+        <p style="font-size:0.78rem; color:var(--muted);">สัดส่วนและบทบาทของแต่ละสินทรัพย์ในพอร์ต</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Name</th>
+              <th>Asset Class</th>
+              <th>Role</th>
+              <th>Stated Weight</th>
+              <th>Value (${currency})</th>
+              <th>Expense</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(payload.assets || []).map(a => `
+              <tr>
+                <td><strong style="font-family:var(--font-mono);">${a.symbol}</strong></td>
+                <td>${a.name || a.symbol}</td>
+                <td>${a.asset_class || 'Asset'}</td>
+                <td><span class="stat-badge blue">${a.role || 'CORE'}</span></td>
+                <td style="font-family:var(--font-mono); font-weight:700;">${(a.weight_pct || 0).toFixed(1)}%</td>
+                <td style="font-family:var(--font-mono);">${(portVal * (a.weight || 0)).toLocaleString(undefined, {maximumFractionDigits:0})} ${currency}</td>
+                <td style="font-family:var(--font-mono);">${((a.expense_ratio || 0) * 100).toFixed(2)}%</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // Overlap Matrix & Underwater Drawdown Chart Row
+  html += `
+    <div class="xray-grid-2">
+      <div class="card-box" style="padding:20px;">
+        <div style="margin-bottom:12px;">
+          <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text);">Overlap Redundancy Check</h3>
+          <p style="font-size:0.75rem; color:var(--muted);">ตรวจการถือหุ้นซ้ำซ้อนระหว่าง ETF / หุ้นเดี่ยว</p>
+        </div>
+        ${(overlap.redundant_pairs && overlap.redundant_pairs.length > 0) ? overlap.redundant_pairs.map(p => `
+          <div class="xray-callout" style="border-left-color:${p.severity === 'HIGH' ? 'var(--rose-dark)' : 'var(--amber-dark)'}; margin-bottom:10px;">
+            <div style="font-weight:700; font-size:0.85rem; color:var(--text);">${p.asset_a} ↔ ${p.asset_b}: ทับซ้อน ${p.overlap_pct}%</div>
+            <div style="font-size:0.78rem; color:var(--muted); margin-top:2px;">${p.explanation}</div>
+          </div>
+        `).join('') : `
+          <div class="xray-callout" style="border-left-color:var(--emerald-dark); background:var(--emerald-light); color:var(--emerald-dark);">
+            ✓ ไม่พบสินทรัพย์ที่ทับซ้อนกันเกินเกณฑ์ (>25%) พอร์ตมีการกระจายความเสี่ยงข้ามสไตล์ได้ดี
+          </div>
+        `}
+      </div>
+
+      <div class="card-box" style="padding:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text);">Underwater Drawdown Curve</h3>
+          <span style="font-size:0.72rem; color:var(--rose); font-family:var(--font-mono);">Drawdown %</span>
+        </div>
+        <div id="xrayDrawdownChart" style="height:260px; width:100%;"></div>
+      </div>
+    </div>
+  `;
+
+  // Correlation Matrix
+  if (corr.tickers && corr.tickers.length > 1) {
+    html += `
+      <div class="card-box" style="padding:20px;">
+        <div style="margin-bottom:12px;">
+          <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text);">Cross-Asset Weekly Correlation Matrix</h3>
+          <p style="font-size:0.75rem; color:var(--muted);">สหสัมพันธ์รายสัปดาห์ (ต่ำกว่า 0.3 = กระจายความเสี่ยงได้จริง, สูงกว่า 0.85 = วิ่งไปทางเดียวกันสูง)</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ticker</th>
+                ${corr.tickers.map(t => `<th>${t}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${corr.tickers.map((t, i) => `
+                <tr>
+                  <td><strong>${t}</strong></td>
+                  ${corr.matrix[i].map(val => `
+                    <td style="font-family:var(--font-mono); font-weight:${val > 0.8 ? '700' : 'normal'}; color:${val < 0.2 ? 'var(--emerald)' : (val > 0.85 ? 'var(--rose)' : 'inherit')};">
+                      ${val.toFixed(2)}
+                    </td>
+                  `).join('')}
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  // Manager Insights & Takeaways
+  if (lookThrough.insights && lookThrough.insights.length > 0) {
+    html += `
+      <div class="card-box" style="padding:20px;">
+        <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text); margin-bottom:10px;">💡 Portfolio Analyst Takeaways</h3>
+        ${lookThrough.insights.map(item => `
+          <div class="xray-callout" style="border-left-color:var(--primary); margin-bottom:8px;">
+            ${item}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+
+  // Render ECharts
+  if (window.echarts) {
+    // 1. Wealth Chart
+    const wContainer = document.getElementById("xrayWealthChart");
+    if (wContainer && portStats.dates) {
+      if (xrayWealthChart) xrayWealthChart.dispose();
+      xrayWealthChart = echarts.init(wContainer);
+      xrayWealthChart.setOption({
+        tooltip: { trigger: 'axis', textStyle: { fontFamily: 'Plus Jakarta Sans', fontSize: 12 } },
+        grid: { left: '3%', right: '4%', bottom: '8%', top: '8%', containLabel: true },
+        xAxis: { type: 'category', data: portStats.dates, axisLine: { lineStyle: { color: theme.border } }, axisLabel: { color: theme.muted } },
+        yAxis: { type: 'value', scale: true, splitLine: { lineStyle: { color: theme.grid } }, axisLabel: { color: theme.muted } },
+        series: [
+          {
+            name: 'Portfolio',
+            type: 'line',
+            data: portStats.wealth_index,
+            smooth: true,
+            lineStyle: { color: '#059669', width: 2.5 },
+            areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(5, 150, 105, 0.25)' }, { offset: 1, color: 'rgba(5, 150, 105, 0.0)' }]) },
+            showSymbol: false
+          },
+          {
+            name: 'S&P 500 (VOO)',
+            type: 'line',
+            data: benchStats.wealth_index,
+            smooth: true,
+            lineStyle: { color: theme.muted, width: 1.5, type: 'dashed' },
+            showSymbol: false
+          }
+        ]
+      });
+    }
+
+    // 2. Look-Through Top Holdings
+    const hContainer = document.getElementById("xrayHoldingsChart");
+    const topHoldings = (lookThrough.top_holdings || []).slice(0, 8).reverse();
+    if (hContainer && topHoldings.length) {
+      if (xrayHoldingsChart) xrayHoldingsChart.dispose();
+      xrayHoldingsChart = echarts.init(hContainer);
+      xrayHoldingsChart.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { left: '3%', right: '8%', bottom: '5%', top: '5%', containLabel: true },
+        xAxis: { type: 'value', splitLine: { lineStyle: { color: theme.grid } }, axisLabel: { color: theme.muted, formatter: '{value}%' } },
+        yAxis: { type: 'category', data: topHoldings.map(h => h.symbol), axisLine: { lineStyle: { color: theme.border } }, axisLabel: { color: theme.text, fontWeight: 'bold' } },
+        series: [{
+          name: 'Effective Weight %',
+          type: 'bar',
+          data: topHoldings.map(h => h.effective_pct),
+          itemStyle: { color: '#4f46e5', borderRadius: [0, 4, 4, 0] },
+          label: { show: true, position: 'right', formatter: '{c}%', color: theme.text, fontSize: 11 }
+        }]
+      });
+    }
+
+    // 3. Drawdown Chart
+    const ddContainer = document.getElementById("xrayDrawdownChart");
+    if (ddContainer && portStats.dates) {
+      if (xrayDrawdownChart) xrayDrawdownChart.dispose();
+      xrayDrawdownChart = echarts.init(ddContainer);
+      xrayDrawdownChart.setOption({
+        tooltip: { trigger: 'axis', textStyle: { fontSize: 12 } },
+        grid: { left: '3%', right: '4%', bottom: '8%', top: '8%', containLabel: true },
+        xAxis: { type: 'category', data: portStats.dates, axisLine: { lineStyle: { color: theme.border } }, axisLabel: { color: theme.muted } },
+        yAxis: { type: 'value', splitLine: { lineStyle: { color: theme.grid } }, axisLabel: { color: theme.muted, formatter: '{value}%' } },
+        series: [{
+          name: 'Drawdown %',
+          type: 'line',
+          data: portStats.drawdown_curve,
+          lineStyle: { color: '#e11d48', width: 1.5 },
+          areaStyle: { color: 'rgba(225, 29, 72, 0.15)' },
+          showSymbol: false
+        }]
+      });
+    }
+  }
+}
+
+function renderXrayThesis(payload) {
+  const container = document.getElementById("xrayDynamicContent");
+  const data = payload.data || {};
+  const fin = data.financials || {};
+  const mult = data.multiples || {};
+  const dcf = data.reverse_dcf || {};
+  const scenarios = dcf.scenarios || {};
+  const moats = data.moat_analysis || [];
+  const preMortem = data.pre_mortem || [];
+  const consensus = data.analyst_consensus || {};
+
+  let html = `
+    <!-- Stock Header Card -->
+    <div class="card-box" style="padding:22px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+      <div>
+        <div class="stat-badge blue" style="margin-bottom:6px;">DEEP THESIS & REVERSE DCF</div>
+        <h2 style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; color:var(--text); letter-spacing:-0.02em;">
+          ${data.name || data.symbol} (${data.symbol})
+        </h2>
+        <div style="font-size:0.8rem; color:var(--muted); margin-top:2px;">
+          ${data.sector || ''} | ${data.industry || ''} | Beta: ${data.beta || 1.0}
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:var(--font-mono); font-size:1.8rem; font-weight:800; color:var(--text);">
+          $${(data.current_price || 0).toFixed(2)}
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted);">
+          Market Cap: $${((data.market_cap || 0) / 1e9).toFixed(1)}B
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 KPI Metrics -->
+    <div class="xray-kpi-grid">
+      <div class="xray-kpi-card">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">Market Implied FCF Growth</div>
+        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--primary);">
+          ${dcf.implied_fcf_growth_pct !== undefined ? dcf.implied_fcf_growth_pct + '%' : 'N/A'}
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted);">10-Yr FCF CAGR to justify price</div>
+      </div>
+
+      <div class="xray-kpi-card">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">Trailing / Forward P/E</div>
+        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--text);">
+          ${mult.trailing_pe || 'N/A'} <span style="font-size:1rem; font-weight:600; color:var(--muted);">/ ${mult.forward_pe || 'N/A'}</span>
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted);">EV/EBITDA: ${mult.ev_to_ebitda || 'N/A'}</div>
+      </div>
+
+      <div class="xray-kpi-card">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">Gross / Operating Margin</div>
+        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--text);">
+          ${(fin.gross_margin_pct || 0).toFixed(1)}% <span style="font-size:1rem; font-weight:600; color:var(--muted);">/ ${(fin.operating_margin_pct || 0).toFixed(1)}%</span>
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted);">FCF Margin: ${(fin.fcf_margin_pct || 0).toFixed(1)}%</div>
+      </div>
+
+      <div class="xray-kpi-card">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--muted);">ROE / Capital Efficiency</div>
+        <div style="font-family:var(--font-mono); font-size:1.6rem; font-weight:800; margin:4px 0; color:var(--emerald);">
+          ${(fin.roe_pct || 0).toFixed(1)}%
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted);">Net Debt/Equity: ${(fin.debt_to_equity || 0).toFixed(2)}</div>
+      </div>
+    </div>
+
+    <!-- Reverse DCF Analysis & Scenarios Card -->
+    <div class="card-box" style="padding:22px;">
+      <div style="margin-bottom:12px;">
+        <h3 style="font-family:var(--font-display); font-size:1.1rem; font-weight:700; color:var(--text);">Reverse DCF — ตลาดกำลังคาดหวังอะไรจากหุ้นตัวนี้?</h3>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:4px; line-height:1.6;">
+          ${dcf.reality_check || 'การคำนวณการเติบโตของกระแสเงินสดที่สะท้อนอยู่ในราคาตลาด'}
+        </p>
+      </div>
+
+      <!-- 3 Scenario Cards Grid -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin-top:16px;">
+        <div style="background:var(--bg-subtle); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px;">
+          <div style="color:var(--rose); font-weight:700; font-size:0.85rem;">🐻 Bear Case</div>
+          <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">FCF Growth: ${scenarios.bear?.assumed_growth_pct || 0}%</div>
+          <div style="font-family:var(--font-mono); font-size:1.4rem; font-weight:800; margin:6px 0; color:var(--text);">$${(scenarios.bear?.target_price || 0).toFixed(2)}</div>
+          <div style="font-size:0.75rem; color:var(--rose); font-weight:600;">${(scenarios.bear?.upside_downside_pct || 0).toFixed(1)}% vs Current</div>
+        </div>
+
+        <div style="background:var(--surface); border:1.5px solid var(--primary); border-radius:var(--radius-md); padding:16px; box-shadow:var(--shadow-sm);">
+          <div style="color:var(--primary); font-weight:700; font-size:0.85rem;">⚖️ Base Case (Fair Value)</div>
+          <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">FCF Growth: ${scenarios.base?.assumed_growth_pct || 0}%</div>
+          <div style="font-family:var(--font-mono); font-size:1.4rem; font-weight:800; margin:6px 0; color:var(--text);">$${(scenarios.base?.target_price || 0).toFixed(2)}</div>
+          <div style="font-size:0.75rem; color:${(scenarios.base?.upside_downside_pct || 0) >= 0 ? 'var(--emerald)' : 'var(--rose)'}; font-weight:600;">
+            ${(scenarios.base?.upside_downside_pct || 0) >= 0 ? '+' : ''}${(scenarios.base?.upside_downside_pct || 0).toFixed(1)}% vs Current
+          </div>
+        </div>
+
+        <div style="background:var(--bg-subtle); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px;">
+          <div style="color:var(--emerald); font-weight:700; font-size:0.85rem;">🐂 Bull Case</div>
+          <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">FCF Growth: ${scenarios.bull?.assumed_growth_pct || 0}%</div>
+          <div style="font-family:var(--font-mono); font-size:1.4rem; font-weight:800; margin:6px 0; color:var(--text);">$${(scenarios.bull?.target_price || 0).toFixed(2)}</div>
+          <div style="font-size:0.75rem; color:var(--emerald); font-weight:600;">+${(scenarios.bull?.upside_downside_pct || 0).toFixed(1)}% vs Current</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Moat & Pre-Mortem Row -->
+    <div class="xray-grid-2">
+      <div class="card-box" style="padding:20px;">
+        <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text); margin-bottom:12px;">🛡️ Competitive Moat Analysis</h3>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          ${moats.map(m => `
+            <div class="xray-callout" style="border-left-color:var(--emerald);">
+              ${m}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="card-box" style="padding:20px;">
+        <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--rose); margin-bottom:12px;">⚠️ Pre-Mortem — อะไรทำให้ Thesis นี้ล้มเหลว?</h3>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          ${preMortem.map(pm => `
+            <div class="xray-callout" style="border-left-color:var(--rose);">
+              ${pm}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
 hydrateCachedScan();
+
 </script>
 </body>
 </html>

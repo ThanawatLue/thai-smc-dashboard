@@ -42,13 +42,30 @@
 7. **Instant DB Serving & Pre-calculated Caching (Sub-500ms):**
    - ผู้ใช้ทั่วไปที่เข้ามาดูหน้าเว็บ จะได้รับการส่งคืนข้อมูลสแกนล่าสุดจาก Database ทันทีในระดับ < 0.5 วินาที โดยไม่ต้องรอดึงราคาใหม่
    - GitHub Actions ทำหน้าที่สแกนเบื้องหลังและอัปเดตข้อมูลสดลง Database ตามสเกดดูล
-8. **ReOrc-Inspired Editorial FinTech Frontend & Dual Themes (NEW - Oct 2026):**
+8. **ReOrc-Inspired Editorial FinTech Frontend & Dual Themes (Oct 2026):**
    - ปรับโฉมหน้าตาใหม่ทั้งหมด โดยถอดดีไซน์สไตล์ AI Dark Neon ออก และนำ Design System สไตล์ [ReOrc.com](https://reorc.com/) มาใช้
    - โทนสี Warm Cream (`#fbfbf9`) + การ์ดสีขาวบริสุทธิ์ (`#ffffff`) เส้นขอบ Hairline คมกริบ (`#e2e8f0`)
    - ใช้ Typography คู่ฟอนต์ `Bricolage Grotesque` + `Plus Jakarta Sans` + `Noto Sans Thai` และ `JetBrains Mono` สำหรับตัวเลขการเงิน
    - สถานะระบบแบบ Live Pill Badge พร้อมจุดกระพริบเขียวสด (Pulsing Emerald Dot) ระดับ Sub-200ms
    - รองรับทั้งโหมด ReOrc Clean Light (ค่าเริ่มต้น) และ Sleek Slate Dark Mode
    - ผ่านการทดสอบ Full E2E Browser Testing ครบทุกฟังก์ชัน (Search, Filter, Chart Rendering, Drawer, Market Switch, Theme Toggle)
+9. **AI PORTFOLIO X-RAY PRO & DEEP THESIS ENGINE (NEW - Oct 2026):**
+   - **Portfolio X-Ray Mode (เมื่อมีสินทรัพย์ 2 ตัวขึ้นไป):**
+     - **Look-Through Effective Exposure:** ทะลุไส้ในของ ETF ทุกตัวเพื่อคำนวณหาน้ำหนักหุ้นจริง เช่น ถือ VOO + QQQM + SCHD ระบบจะรวมน้ำหนัก NVDA, AAPL, MSFT ที่ซ่อนอยู่ในแต่ละกองเข้าด้วยกัน
+     - **Holding Overlap Matrix:** คำนวณค่าสัมประสิทธิ์การทับซ้อน $\sum \min(w_A, w_B)$ ระหว่างสินทรัพย์ทุกคู่ พร้อมแจ้งเตือนคู่ที่มีความซ้ำซ้อนสูง (>25%) ในภาษาไทยที่เข้าใจง่าย
+     - **Max Drawdown ในรูปเงินจริง (Real Currency Loss):** แปลงการลดลงสูงสุดจากจุดพีคออกมาเป็นจำนวนเงินบาทหรือดอลลาร์จริงตามขนาดพอร์ต เช่น พอร์ต 1,000,000 บาท ลดลงสูงสุด -11.96% คิดเป็นเงินลดลง -119,559.95 บาท พร้อมคำนวณระยะเวลาฟื้นตัว (Recovery Time)
+     - **Cross-Asset Weekly Correlation Matrix:** ประมวลผลสหสัมพันธ์ผลตอบแทนรวม (Total Return) โดย Resample เป็นรายสัปดาห์ (Friday Close) เพื่อให้สินทรัพย์ที่เทรด 24/7 เช่น Crypto (BTC) ทำงานร่วมกับตลาดหุ้นอเมริกาและพันธบัตรได้อย่างแม่นยำ
+     - **Concentration Analysis (HHI):** คำนวณ Herfindahl-Hirschman Index และจำนวนการเดิมพันอิสระ ($N_{\text{eff}} = 1/HHI$)
+     - **CAGR, Annualized Volatility, Sharpe, Sortino, Calmar:** เปรียบเทียบเคียงข้างกับ S&P 500 (VOO Total Return)
+   - **Deep Thesis & Reverse DCF Mode (เมื่อใส่หุ้นเดี่ยว 1 ตัว เช่น NVDA, RKLB):**
+     - **Reverse DCF Implied Growth Solver:** ใช้ Bisection Algorithm คำนวณหาอัตราการเติบโตของ Free Cash Flow (FCF CAGR) เฉลี่ย 10 ปี ที่ตลาดกำลังสะท้อนอยู่ในราคาปัจจุบัน
+     - **Reality Check & Scenarios:** ประเมินความสมเหตุสมผลของความคาดหวังตลาด และคำนวณราคาเหมาะสม 3 รูปแบบ (Bear / Base / Bull) พร้อม Margin of Safety
+     - **Competitive Moat Analysis & Pre-Mortem:** วิเคราะห์คูเมืองธุรกิจ (Pricing power, High ROIC, Switching costs) และระบุข้อผิดพลาดที่จะทำให้ Thesis ล้มเหลว
+   - **Standalone HTML Dashboard Export:**
+     - ปุ่ม Export สร้างรายงาน HTML แบบ Single File ที่สมบูรณ์ในตัวเอง มีกราฟ ECharts/Chart.js ฝังพร้อมเปิดดูหรือแชร์ได้โดยไม่ต้องพึ่ง Server
+   - **API Routes:**
+     - `POST /api/xray/analyze` (JSON analysis)
+     - `POST /api/xray/export-html` (Downloadable HTML report)
 
 ---
 
@@ -57,17 +74,26 @@
 ```text
 stamp_trading/
 ├── dashboard/                  # ส่วนงาน Web Application & Database Layer
-│   ├── app.py                  # Flask Web Server & API Routes (/api/scan, /api/sources)
+│   ├── app.py                  # Flask Web Server & API Routes (/api/scan, /api/xray/analyze, /api/xray/export-html)
 │   ├── db.py                   # SQLAlchemy Database Models (Scan, ScanResult)
 │   ├── templates/
-│   │   └── dashboard.html      # หน้าจอ Frontend Dashboard (ECharts + Tailwind CSS)
+│   │   └── dashboard.html      # หน้าจอ Frontend ReOrc FinTech (SMC Scanner + AI Portfolio X-Ray Tab)
 │   └── state/                  # โฟลเดอร์เก็บไฟล์ SQLite Database (dashboard.db)
 ├── src/
+│   ├── portfolio_xray/         # เครื่องมือวิเคราะห์ AI Portfolio X-Ray Pro & Deep Thesis
+│   │   ├── __init__.py
+│   │   ├── parser.py           # ตัวแกะข้อมูลพอร์ตอัจฉริยะ (รองรับสัดส่วน %, Equal weight, Crypto ticker)
+│   │   ├── holdings_data.py    # ฐานข้อมูลและ Cache ไส้ใน ETF ชั้นนำ (VOO, QQQ, SCHD, SMH, TLT, GLD ฯลฯ)
+│   │   ├── metrics.py          # Look-Through, Overlap Matrix, HHI, CAGR, Volatility, Drawdown เงินจริง, Sharpe
+│   │   ├── reverse_dcf.py      # Bisection Solver คำนวณ Market Implied FCF Growth และ Bull/Base/Bear
+│   │   ├── deep_thesis.py      # ดึงงบการเงินสดจาก yfinance, วิเคราะห์ Moat, Multiples, และ Pre-Mortem
+│   │   ├── html_generator.py   # สร้างรายงาน Standalone HTML Report สไตล์ ReOrc
+│   │   └── engine.py           # ตัวเชื่อมประสานหลัก (Coordinator Engine)
 │   └── th_smc/                 # ส่วนงาน Core Business & SMC Analytics Engine
 │       ├── __init__.py
 │       ├── engine.py           # ตัวประมวลผล SMC Analysis, Scoring และ Source Aggregation
 │       └── scraper.py          # ตัวดึงข้อมูลราคา Real-time (TradingView & yfinance)
-├── tests/                      # Automated Test Suites
+├── tests/                      # Automated Test Suites (test_engine.py, test_portfolio_xray.py)
 ├── Procfile                    # สคริปต์ควบคุมการเริ่มรัน Production Gunicorn Server
 ├── render.yaml                 # ไฟล์ Infrastructure-as-Code Blueprint สำหรับ Render.com
 ├── requirements.txt            # รายการ Python Packages ทั้งหมดที่ใช้ใน Production

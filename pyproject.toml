@@ -24,10 +24,11 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["th_smc"]
+packages = ["th_smc", "portfolio_xray"]
 
 [tool.setuptools.package-dir]
 th_smc = "src/th_smc"
+portfolio_xray = "src/portfolio_xray"
 
 [tool.ruff]
 line-length = 100
