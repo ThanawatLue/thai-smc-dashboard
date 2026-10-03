@@ -215,7 +215,8 @@ button:hover {
 }
 
 .header-container {
-  max-width: 1480px;
+  max-width: 1820px;
+  width: 100%;
   margin: 0 auto;
   padding: 12px 24px;
   display: flex;
@@ -360,19 +361,20 @@ button:hover {
 
 /* Main Layout */
 .main-wrapper {
-  max-width: 1480px;
+  max-width: 1820px;
+  width: 100%;
   margin: 0 auto;
-  padding: 24px;
+  padding: 16px 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 /* Hero Stats Section (ReOrc Divided Cards) */
 .hero-section {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: 16px;
+  gap: 14px;
 }
 
 .stat-card {
@@ -443,9 +445,43 @@ button:hover {
 /* Two Column Body: Sidebar / Rules + Table Content */
 .content-grid {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 20px;
   align-items: start;
+  transition: grid-template-columns 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.content-grid.sidebar-collapsed {
+  grid-template-columns: 0px minmax(0, 1fr);
+  gap: 0;
+}
+.content-grid.sidebar-collapsed .sidebar-panel {
+  display: none !important;
+}
+
+.btn-toggle-sidebar {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition);
+  user-select: none;
+}
+.btn-toggle-sidebar:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+  border-color: var(--primary);
+}
+.btn-toggle-sidebar.active {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 /* Sidebar Settings & Principles */
@@ -698,9 +734,15 @@ tr.detail-row {
 tr.detail-row.open {
   display: table-row;
 }
+tr.detail-row > td {
+  padding: 0 !important;
+  white-space: normal !important;
+}
 .detail-content {
-  padding: 24px;
+  padding: 18px 22px;
   animation: fadeIn 0.25s ease-out;
+  box-sizing: border-box;
+  width: 100%;
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-4px); }
@@ -711,7 +753,7 @@ tr.detail-row.open {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
   gap: 12px;
 }
@@ -727,15 +769,16 @@ tr.detail-row.open {
 
 .setup-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+  width: 100%;
 }
 .setup-box {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 12px 14px;
+  padding: 10px 12px;
   box-shadow: var(--shadow-sm);
   min-width: 0;
   overflow: hidden;
@@ -763,19 +806,20 @@ tr.detail-row.open {
 
 .checklist {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 10px;
-  margin-bottom: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+  width: 100%;
 }
 .check-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--surface);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
   color: var(--text-secondary);
 }
@@ -1089,7 +1133,8 @@ tr.detail-row.open {
 
 /* ECharts Container */
 .chart-wrap {
-  height: 580px;
+  height: 640px;
+  width: 100%;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -1322,9 +1367,14 @@ tr.detail-row.open {
     <!-- Right Column: Candidates Table & Details -->
     <section class="panel-main">
       <div class="panel-header">
-        <div class="panel-title-group">
-          <h2>Candidates Overview</h2>
-          <p>Click any row to view candlestick chart, zones, and trade parameters</p>
+        <div class="panel-title-group" style="display:flex; align-items:center; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h2>Candidates Overview</h2>
+            <p>Click any row to view candlestick chart, zones, and trade parameters</p>
+          </div>
+          <button type="button" id="btnToggleSidebar" class="btn-toggle-sidebar" title="ซ่อน/แสดงแถบข้าง เพื่อขยายกราฟและตารางให้กว้างเต็มจอ">
+            <span>◧</span> <span id="toggleSidebarText">ซ่อนแถบข้าง (ขยายเต็มจอ)</span>
+          </button>
         </div>
 
         <!-- Quick Filter Chips -->
@@ -2990,6 +3040,33 @@ minRrInput.addEventListener("change", (e) => {
   scan(false);
 });
 document.getElementById("ruleRrText").textContent = `Trade only when RR is 1:${Number(minRrInput.value).toFixed(1)} or better.`;
+
+// Sidebar Collapsible Toggle
+const btnToggleSidebar = document.getElementById("btnToggleSidebar");
+const contentGrid = document.querySelector(".content-grid");
+const toggleText = document.getElementById("toggleSidebarText");
+
+if (btnToggleSidebar && contentGrid) {
+  const isCollapsed = localStorage.getItem("smc_sidebar_collapsed") === "true";
+  if (isCollapsed) {
+    contentGrid.classList.add("sidebar-collapsed");
+    btnToggleSidebar.classList.add("active");
+    if (toggleText) toggleText.textContent = "แสดงแถบข้าง (Show Sidebar)";
+  }
+
+  btnToggleSidebar.addEventListener("click", () => {
+    contentGrid.classList.toggle("sidebar-collapsed");
+    const collapsed = contentGrid.classList.contains("sidebar-collapsed");
+    localStorage.setItem("smc_sidebar_collapsed", collapsed);
+    btnToggleSidebar.classList.toggle("active", collapsed);
+    if (toggleText) {
+      toggleText.textContent = collapsed ? "แสดงแถบข้าง (Show Sidebar)" : "ซ่อนแถบข้าง (ขยายเต็มจอ)";
+    }
+    if (activeChart && activeChart.resize) {
+      setTimeout(() => activeChart.resize(), 250);
+    }
+  });
+}
 
 document.querySelectorAll("th[data-sort]").forEach(th => {
   th.addEventListener("click", () => {
