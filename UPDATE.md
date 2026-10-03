@@ -77,8 +77,20 @@
      - `POST /api/xray/analyze` (JSON analysis)
      - `POST /api/xray/export-html` (Downloadable HTML report)
     - **Quality Assurance & End-to-End Testing (E2E):**
-      - Unit Tests: 21/21 Automated Tests ผ่าน 100% ใน tests/test_portfolio_xray.py และ tests/test_engine.py
+      - Unit Tests: 23/23 Automated Tests ผ่าน 100% ใน tests/test_portfolio_xray.py และ tests/test_engine.py
       - Browser E2E Testing: ผ่านการทดสอบด้วย Chrome DevTools MCP ทั้งโหมด Portfolio (Blended TER, Overlap vs Correlation, Macro Stress Test 4 Scenarios) และโหมด Deep Thesis (Consensus Rating, Price Target Range, Investment Verdict, Reverse DCF) ตรวจสอบแล้วไม่มี JavaScript Console Errors ใดๆ ทั้งสิ้น
+10. **SMC Scanner Robust Fallback & Liquid Candidate Guarantee (Oct 2026 Fix):**
+    - **ต้นตอของปัญหา:** บน Cloud Server (Render) ผู้ให้บริการ TradingView Screener จะส่ง HTTP 429 Too Many Requests เมื่อเรียกจาก Datacenter IPs ทำให้ระบบต้องใช้ Fallback Universe แต่เกิดปัญหา:
+      1. ใน Fallback mode ตลาด TH คืนค่า `sector: "TH"` และไม่มี `market_cap` ทำให้หลุดเงื่อนไขการเป็น SET100 และ Swing Universe ส่งผลให้ไม่มีหุ้นตัวใดผ่านเกณฑ์คัดกรอง VCP, CANSLIM, DIP_BUY, MOMENTUM
+      2. ตลาด US และ US_MEDIUM_TERM เดิม Fallback มีเพียงหุ้นตัวเดียว (`AAPL`)
+      3. ตลาด GOLD คืนค่าเพียงสัญลักษณ์เดียว (`GC=F`)
+      4. Database Cache บันทึกผลสแกนที่ว่างเปล่า (`count: 0, results: []`) ลง SQLite ทำให้ผู้ใช้เห็น "0 candidates evaluated" และตารางว่างตลอดเวลา
+    - **แนวทางแก้ไขและปรับปรุง:**
+      1. **Multi-Market Liquid Fallback Universe:** กำหนด `DEFAULT_TH_SYMBOLS` (44 หุ้น SET50/SET100), `DEFAULT_US_SYMBOLS` (30 หุ้น S&P 500 เมกะแคป), และ `DEFAULT_GOLD_SYMBOLS` (6 สินทรัพย์โภคภัณฑ์และโลหะมีค่า: `GC=F`, `SI=F`, `PL=F`, `GLD`, `IAU`, `GDX`)
+      2. **Screen Metrics & Fundamental Baseline:** ปรับปรุง `_screen_metrics` ให้ส่งคืน sector และ market cap ที่ถูกต้องสำหรับแต่ละตลาด พร้อมค่าพื้นฐาน (ROE, Debt/Equity, FCF margin) เพื่อรองรับแท็บ US M.Term
+      3. **Liquid Candidate Guarantee:** เพิ่มกลไกความปลอดภัย หากเกณฑ์ Breakout ไม่พบหุ้นตามเงื่อนไข (เช่น ตลาดพักฐาน) ระบบจะดึงหุ้นสภาพคล่องสูงของตลาดนั้นๆ (`CORE_MONITOR`) มาประเมิน SMC Structure, Order Block, FVG, RR, และ Decision ให้ครบถ้วน 15 รายการเสมอ ผู้ใช้จึงมีข้อมูลและกราฟให้ดูครบทุกแท็บ
+      4. **Cache Integrity:** ปรับปรุง `_load_scan_cache` และ `_save_scan_cache` ใน `dashboard/app.py` ไม่ให้บันทึกหรือเสิร์ฟ Cache ที่มีจำนวนหุ้นเป็น 0
+      5. **Automated Test Coverage:** เพิ่มชุดทดสอบจำลองเหตุการณ์ HTTP 429 ใน `tests/test_engine.py` ยืนยันว่าทุกตลาดต้องมี Candidates เสมอแม้เกิด 429
 
 ---
 

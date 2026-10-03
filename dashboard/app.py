@@ -39,11 +39,20 @@ def clean_nan(obj):
 def _load_scan_cache(min_rr: float, market: str) -> dict | None:
     key = f"{market}_{min_rr}"
     if key in _SCAN_CACHE:
-        return _SCAN_CACHE[key]["data"]
+        data = _SCAN_CACHE[key]["data"]
+        if data.get("count", 0) > 0 and len(data.get("results", [])) > 0:
+            return data
+        else:
+            del _SCAN_CACHE[key]
         
     with SessionLocal() as session:
-        scan = session.query(Scan).filter(Scan.market == market, Scan.min_rr == min_rr).order_by(Scan.created_at.desc()).first()
-        if not scan:
+        scan = (
+            session.query(Scan)
+            .filter(Scan.market == market, Scan.min_rr == min_rr, Scan.count > 0)
+            .order_by(Scan.created_at.desc())
+            .first()
+        )
+        if not scan or not scan.results:
             return None
             
         data = {
@@ -70,11 +79,15 @@ def _load_scan_cache(min_rr: float, market: str) -> dict | None:
                 } for r in scan.results
             ]
         }
+        if len(data["results"]) == 0:
+            return None
         _SCAN_CACHE[key] = {"data": data, "at": scan.created_at.timestamp()}
         return data
 
 
 def _save_scan_cache(data: dict, min_rr: float, market: str) -> None:
+    if not data or data.get("count", 0) == 0 or len(data.get("results", [])) == 0:
+        return
     data = clean_nan(data)
     with SessionLocal() as session:
         scan = Scan(
@@ -135,13 +148,14 @@ def api_scan():
         return jsonify(data)
 
     cached = _load_scan_cache(min_rr, market)
-    if cached and not refresh:
+    if cached and not refresh and cached.get("count", 0) > 0 and len(cached.get("results", [])) > 0:
         return jsonify(clean_nan(cached))
 
     try:
         data = scan_symbols(None, min_rr=min_rr, market=market)
         data = clean_nan(data)
-        _save_scan_cache(data, min_rr, market)
+        if data.get("count", 0) > 0 and len(data.get("results", [])) > 0:
+            _save_scan_cache(data, min_rr, market)
         return jsonify(data)
     except Exception as e:
         if cached:
