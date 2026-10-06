@@ -217,7 +217,18 @@ stamp_trading/
      - **`↺ Fit`:** รีเซ็ตมุมมองกลับมาที่จุดโฟกัสมาตรฐานทันที
 
 ---
-*อัปเดตล่าสุดเมื่อ: 3 ตุลาคม 2026*
 
+## 🛡️ 8. การเพิ่มความทนทานต่อ Cloud IP Blocking (Single-Stock Deep Thesis Cloud Resilience)
 
+แก้ไขปัญหาการวิเคราะห์หุ้นเดี่ยว (เช่น `GOOGL`, `NVDA`, `AAPL`) บนระบบคลาวด์ Render ที่ถูก Yahoo Finance บล็อก IP/Scraping:
 
+1. **ติดตั้ง `curl_cffi` ใน Production:**
+   - เพิ่ม `curl_cffi>=0.7.0` ใน `requirements.txt` และ `pyproject.toml` ทำให้ `yfinance` สามารถจำลอง TLS Fingerprint ของเบราว์เซอร์ Chrome ได้สำเร็จบนเซิร์ฟเวอร์ Linux ของ Render ช่วยข้ามการบล็อกบอทของ Yahoo Finance
+2. **ระบบดึงข้อมูลแบบ Multi-Tier Fallback ใน `deep_thesis.py`:**
+   - **Tier 1:** ลองดึงข้อมูลสดผ่าน `ticker.info`
+   - **Tier 2:** หากถูกบล็อก ให้ดึงราคาล่าสุด, Market Cap, 52W High/Low ผ่าน `ticker.fast_info` และ `yf.download()` (Chart endpoint ซึ่งไม่ถูกบล็อกบน Cloud Datacenter)
+   - **Tier 3:** รองรับการดึงข้อมูลงบการเงินจากงบกำไรขาดทุน (`income_stmt`), งบกระแสเงินสด (`cashflow`), และงบดุล (`balance_sheet`)
+   - **Tier 4 (Curated Institutional Profiles):** มีฐานข้อมูลสถิติพื้นฐาน, TAM, S-Curve และ Catalysts สำรองสำหรับหุ้นชั้นนำ (GOOGL, NVDA, AAPL, MSFT, AMZN, META, TSLA, RKLB, PLTR ฯลฯ) เพื่อให้แน่ใจว่าระบบจะแสดงผล Deep Thesis ได้อย่างครบถ้วนเสมอ แม้ Yahoo Finance API จะมีปัญหา
+
+---
+*อัปเดตล่าสุดเมื่อ: 6 ตุลาคม 2026*
